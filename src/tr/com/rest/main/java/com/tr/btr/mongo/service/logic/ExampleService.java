@@ -1,6 +1,6 @@
-package tr.com.rest.btr.mongo.service.logic;
+package com.tr.btr.mongo.service.logic;
 
-import tr.com.rest.btr.mongo.client.model.ExampleModel;
+import com.tr.btr.mongo.client.model.ExampleModel;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package tr.com.rest.btr.mongo.client.model;
+package com.tr.btr.mongo.client.model;
 
 import com.sun.istack.NotNull;
 

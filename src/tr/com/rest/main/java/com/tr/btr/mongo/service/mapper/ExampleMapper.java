@@ -1,8 +1,8 @@
-package tr.com.rest.btr.mongo.service.mapper;
+package com.tr.btr.mongo.service.mapper;
 
 import org.mapstruct.Mapper;
-import tr.com.rest.btr.mongo.client.model.ExampleModel;
-import tr.com.rest.btr.mongo.service.entity.ExampleEntity;
+import com.tr.btr.mongo.client.model.ExampleModel;
+import com.tr.btr.mongo.service.entity.ExampleEntity;
 
 import java.util.List;
 
