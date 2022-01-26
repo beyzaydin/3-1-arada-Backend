@@ -1,4 +1,4 @@
-package com.tr.btr.mongo.service.entity;
+package winx.bitirme.mongo.service.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

@@ -1,4 +1,4 @@
-package com.tr.btr.mongo.client.model;
+package winx.bitirme.mongo.client.model;
 
 import com.sun.istack.NotNull;
 

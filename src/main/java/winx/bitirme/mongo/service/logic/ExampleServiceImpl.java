@@ -1,14 +1,16 @@
-package com.tr.btr.mongo.service.logic;
+package winx.bitirme.mongo.service.logic;
 
-import com.tr.btr.mongo.client.model.ExampleModel;
-import com.tr.btr.mongo.service.entity.ExampleEntity;
-import com.tr.btr.mongo.service.repository.ExampleRepository;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import winx.bitirme.mongo.client.model.ExampleModel;
+import winx.bitirme.mongo.service.entity.ExampleEntity;
+import winx.bitirme.mongo.service.repository.ExampleRepository;
 
 import java.util.ArrayList;
 import java.util.List;

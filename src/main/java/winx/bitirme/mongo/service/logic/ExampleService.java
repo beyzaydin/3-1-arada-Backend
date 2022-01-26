@@ -1,6 +1,8 @@
-package com.tr.btr.mongo.service.logic;
+package winx.bitirme.mongo.service.logic;
 
-import com.tr.btr.mongo.client.model.ExampleModel;
+
+
+import winx.bitirme.mongo.client.model.ExampleModel;
 
 import java.util.List;
 

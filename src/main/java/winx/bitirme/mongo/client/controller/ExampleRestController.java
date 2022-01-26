@@ -1,10 +1,11 @@
-package com.tr.btr.mongo.client.controller;
+package winx.bitirme.mongo.client.controller;
 
-import com.tr.btr.mongo.client.model.ExampleModel;
-import com.tr.btr.mongo.service.logic.ExampleService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import winx.bitirme.mongo.client.model.ExampleModel;
+import winx.bitirme.mongo.service.logic.ExampleService;
 
 import java.util.List;
 

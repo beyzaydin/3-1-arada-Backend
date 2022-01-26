@@ -1,4 +1,4 @@
-package com.tr.btr.mongo.service.entity;
+package winx.bitirme.mongo.service.entity;
 
 import com.sun.istack.NotNull;
 import lombok.Data;

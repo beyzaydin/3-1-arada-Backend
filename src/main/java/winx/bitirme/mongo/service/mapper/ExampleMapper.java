@@ -1,8 +1,9 @@
-package com.tr.btr.mongo.service.mapper;
+package winx.bitirme.mongo.service.mapper;
 
 import org.mapstruct.Mapper;
-import com.tr.btr.mongo.client.model.ExampleModel;
-import com.tr.btr.mongo.service.entity.ExampleEntity;
+import winx.bitirme.mongo.client.model.ExampleModel;
+import winx.bitirme.mongo.service.entity.ExampleEntity;
+
 
 import java.util.List;
 

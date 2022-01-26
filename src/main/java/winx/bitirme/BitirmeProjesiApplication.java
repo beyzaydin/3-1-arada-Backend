@@ -1,4 +1,4 @@
-package com.tr.btr;
+package winx.bitirme;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan(basePackages = "com.tr.btr")
+@ComponentScan(basePackages = "winx.bitirme")
 public class BitirmeProjesiApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
