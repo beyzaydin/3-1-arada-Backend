@@ -2,6 +2,8 @@ package winx.bitirme;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +12,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @EnableMongoRepositories
 @Configuration
-@EnableAutoConfiguration
-@ComponentScan(basePackages = "winx.bitirme")
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class BitirmeProjesiApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
