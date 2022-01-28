@@ -1,4 +1,4 @@
-package main.java.winx.bitirme.auth.client.model;
+package winx.bitirme.auth.client.model;
 
 import javax.validation.constraints.NotBlank;
 

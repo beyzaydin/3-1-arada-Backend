@@ -1,7 +1,5 @@
-package main.java.winx.bitirme.auth.service.logic;
+package winx.bitirme.auth.service.logic;
 
-import main.java.winx.bitirme.auth.service.entity.User;
-import main.java.winx.bitirme.auth.service.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -10,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import winx.bitirme.auth.service.entity.User;
+import winx.bitirme.auth.service.repository.UserRepository;
 
 import javax.transaction.Transactional;
 

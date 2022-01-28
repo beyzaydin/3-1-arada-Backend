@@ -1,7 +1,5 @@
-package main.java.winx.bitirme.auth.service.filter;
+package winx.bitirme.auth.service.filter;
 
-import main.java.winx.bitirme.auth.service.logic.UserDetailsServiceImpl;
-import main.java.winx.bitirme.config.utils.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import winx.bitirme.auth.service.logic.UserDetailsServiceImpl;
+import winx.bitirme.auth.service.utils.JwtUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

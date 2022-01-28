@@ -1,10 +1,10 @@
-package main.java.winx.bitirme.auth.service.logic;
+package winx.bitirme.auth.service.logic;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import main.java.winx.bitirme.auth.service.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import winx.bitirme.auth.service.entity.User;
 
 import java.util.Collection;
 import java.util.List;

@@ -1,16 +1,5 @@
-package main.java.winx.bitirme.auth.client.controller;
+package winx.bitirme.auth.client.controller;
 
-import main.java.winx.bitirme.auth.client.model.JwtResponse;
-import main.java.winx.bitirme.auth.client.model.LoginRequest;
-import main.java.winx.bitirme.auth.client.model.MessageResponse;
-import main.java.winx.bitirme.auth.client.model.SignupRequest;
-import main.java.winx.bitirme.auth.service.entity.ERole;
-import main.java.winx.bitirme.auth.service.entity.Role;
-import main.java.winx.bitirme.auth.service.entity.User;
-import main.java.winx.bitirme.auth.service.logic.UserDetailsImpl;
-import main.java.winx.bitirme.auth.service.repository.RoleRepository;
-import main.java.winx.bitirme.auth.service.repository.UserRepository;
-import main.java.winx.bitirme.config.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -23,6 +12,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import winx.bitirme.auth.client.model.JwtResponse;
+import winx.bitirme.auth.client.model.LoginRequest;
+import winx.bitirme.auth.client.model.MessageResponse;
+import winx.bitirme.auth.client.model.SignupRequest;
+import winx.bitirme.auth.service.entity.Role;
+import winx.bitirme.auth.service.entity.User;
+import winx.bitirme.auth.service.logic.UserDetailsImpl;
+import winx.bitirme.auth.service.repository.RoleRepository;
+import winx.bitirme.auth.service.repository.UserRepository;
+import winx.bitirme.auth.service.utils.JwtUtils;
+import winx.bitirme.mongo.service.logic.SequenceGeneratorService;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -34,24 +34,41 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    @Autowired
-    private final MongoOperations mongo;
-    @Autowired
-    private final MongoTemplate mongoTemplate;
-    @Autowired
-    AuthenticationManager authenticationManager;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RoleRepository roleRepository;
-    @Autowired
-    PasswordEncoder encoder;
-    @Autowired
-    JwtUtils jwtUtils;
 
-    public AuthController(MongoOperations mongo, MongoTemplate mongoTemplate) {
+    private final MongoOperations mongo;
+
+    private final MongoTemplate mongoTemplate;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final UserRepository userRepository;
+
+    private final RoleRepository roleRepository;
+
+    private final PasswordEncoder encoder;
+
+    private final JwtUtils jwtUtils;
+
+    private final SequenceGeneratorService sequenceGeneratorService;
+
+    @Autowired
+    public AuthController(MongoOperations mongo,
+                          MongoTemplate mongoTemplate,
+                          AuthenticationManager authenticationManager,
+                          UserRepository userRepository,
+                          RoleRepository roleRepository,
+                          PasswordEncoder encoder,
+                          JwtUtils jwtUtils,
+                          SequenceGeneratorService sequenceGeneratorService) {
         this.mongo = mongo;
         this.mongoTemplate = mongoTemplate;
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.encoder = encoder;
+        this.jwtUtils = jwtUtils;
+        this.sequenceGeneratorService = sequenceGeneratorService;
+
     }
 
     @PostMapping("/signin")
@@ -83,13 +100,6 @@ public class AuthController {
         user.setUsername("baydin");
         user.setPassword("12345");
         Role role = new Role();
-        role.setName(ERole.ROLE_ADMIN);
-        role.setId(1);
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
-        User entity = userRepository.save(user);
-        System.out.println(entity);
         return user;
     }
 
@@ -97,14 +107,14 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
         if (mongo.exists(
-                Query.query(Criteria.where("username").is(signUpRequest.getUsername())), SignupRequest.class)) {
+                Query.query(Criteria.where("username").is(signUpRequest.getUsername())), User.class)) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
 
         if (mongo.exists(
-                Query.query(Criteria.where("email").is(signUpRequest.getEmail())), SignupRequest.class)) {
+                Query.query(Criteria.where("email").is(signUpRequest.getEmail())), User.class)) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));
@@ -146,7 +156,8 @@ public class AuthController {
         }
 
         //user.setRoles(roles);
-        user.setId(2L);
+        long id = sequenceGeneratorService.generateSequence(User.SEQUENCE_NAME);
+        user.setId(id);
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));

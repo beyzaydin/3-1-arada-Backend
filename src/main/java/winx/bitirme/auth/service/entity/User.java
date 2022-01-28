@@ -1,6 +1,7 @@
-package main.java.winx.bitirme.auth.service.entity;
+package winx.bitirme.auth.service.entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import javax.validation.constraints.Email;
@@ -10,10 +11,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class User {
-
+    @Transient
+    public static final String SEQUENCE_NAME = "user_sequence";
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank

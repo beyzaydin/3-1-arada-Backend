@@ -1,8 +1,5 @@
-package main.java.winx.bitirme.config;
+package winx.bitirme.auth.service.utils;
 
-import main.java.winx.bitirme.auth.service.filter.AuthTokenFilter;
-import main.java.winx.bitirme.auth.service.logic.UserDetailsServiceImpl;
-import main.java.winx.bitirme.config.utils.AuthEntryPointJwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +13,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import winx.bitirme.auth.service.filter.AuthTokenFilter;
+import winx.bitirme.auth.service.logic.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity

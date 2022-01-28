@@ -1,4 +1,4 @@
-package main.java.winx.bitirme.auth.service.entity;
+package winx.bitirme.auth.service.entity;
 
 public enum ERole {
     ROLE_USER,
