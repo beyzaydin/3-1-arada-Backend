@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Query query = new Query();
         query.addCriteria(Criteria.where("username").is(username));
-        User user = mongoTemplate.find(query, User.class).get(0);
+        User user = mongoTemplate.findOne(query, User.class);
         if(user == null )
                throw new UsernameNotFoundException("User Not Found with username: " + username);
         return UserDetailsImpl.build(user);

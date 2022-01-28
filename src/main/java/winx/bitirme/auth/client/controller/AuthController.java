@@ -16,6 +16,7 @@ import winx.bitirme.auth.client.model.JwtResponse;
 import winx.bitirme.auth.client.model.LoginRequest;
 import winx.bitirme.auth.client.model.MessageResponse;
 import winx.bitirme.auth.client.model.SignupRequest;
+import winx.bitirme.auth.service.entity.ERole;
 import winx.bitirme.auth.service.entity.Role;
 import winx.bitirme.auth.service.entity.User;
 import winx.bitirme.auth.service.logic.UserDetailsImpl;
@@ -103,6 +104,13 @@ public class AuthController {
         return user;
     }
 
+    @PostMapping("/role")
+    public Role addRole(@RequestBody Role role){
+        long id = sequenceGeneratorService.generateSequence(Role.SEQUENCE_NAME);
+        role.setId(id);
+        return roleRepository.insert(role);
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
@@ -129,33 +137,42 @@ public class AuthController {
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {
-           /* Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            Role userRole = mongo.findOne(
+                    Query.query(Criteria.where("name").is(ERole.ROLE_USER)), Role.class);
+            if(userRole == null)
+                throw new RuntimeException("Error: Role is not found.");
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
+                Role userRole;
                 switch (role) {
                     case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
+                        userRole = mongo.findOne(
+                                Query.query(Criteria.where("name").is(ERole.ROLE_ADMIN)), Role.class);
+                        if(userRole == null)
+                            throw new RuntimeException("Error: Role is not found.");
+                        roles.add(userRole);
 
                         break;
                     case "mod":
-                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(modRole);
+                        userRole = mongo.findOne(
+                                Query.query(Criteria.where("name").is(ERole.ROLE_MODERATOR)), Role.class);
+                        if(userRole == null)
+                            throw new RuntimeException("Error: Role is not found.");
+                        roles.add(userRole);
 
                         break;
                     default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        userRole = mongo.findOne(
+                                Query.query(Criteria.where("name").is(ERole.ROLE_USER)), Role.class);
+                        if(userRole == null)
+                            throw new RuntimeException("Error: Role is not found.");
                         roles.add(userRole);
                 }
-            });*/
+            });
         }
 
-        //user.setRoles(roles);
+        user.setRoles(roles);
         long id = sequenceGeneratorService.generateSequence(User.SEQUENCE_NAME);
         user.setId(id);
         userRepository.save(user);

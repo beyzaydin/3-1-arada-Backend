@@ -16,7 +16,7 @@ public class Role {
     public static final String SEQUENCE_NAME = "role_sequence";
 
     @Id
-    private Integer id;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Size(max = 20)
@@ -29,11 +29,11 @@ public class Role {
         this.name = name;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
