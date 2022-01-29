@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import winx.bitirme.auth.service.entity.EnumGender;
 import winx.bitirme.auth.service.entity.User;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -23,13 +25,32 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
 
+    private String name;
+
+    private String surname;
+
+    private Date birthDate;
+
+    private EnumGender gender;
+
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(Long id,
+                           String username,
+                           String email,
+                           String password,
+                           String name,
+                           String surname,
+                           Date birthDate,
+                           EnumGender gender, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.birthDate = birthDate;
+        this.gender = gender;
         this.authorities = authorities;
     }
 
@@ -46,7 +67,10 @@ public class UserDetailsImpl implements UserDetails {
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities);
+                user.getName(),
+                user.getSurname(),
+                user.getBirthDate(),
+                user.getGender(), authorities);
     }
 
     @Override
@@ -91,6 +115,7 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 
     @Override
     public boolean equals(Object o) {

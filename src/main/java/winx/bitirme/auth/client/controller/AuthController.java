@@ -105,7 +105,7 @@ public class AuthController {
     }
 
     @PostMapping("/role")
-    public Role addRole(@RequestBody Role role){
+    public Role addRole(@RequestBody Role role) {
         long id = sequenceGeneratorService.generateSequence(Role.SEQUENCE_NAME);
         role.setId(id);
         return roleRepository.insert(role);
@@ -130,8 +130,14 @@ public class AuthController {
 
         // Create new user's account
         User user = new User(signUpRequest.getUsername(),
+                signUpRequest.getName(),
+                signUpRequest.getSurname(),
+                signUpRequest.getBirthDate(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+                encoder.encode(signUpRequest.getPassword()),
+                signUpRequest.getGender()
+        );
+
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
@@ -139,7 +145,7 @@ public class AuthController {
         if (strRoles == null) {
             Role userRole = mongo.findOne(
                     Query.query(Criteria.where("name").is(ERole.ROLE_USER)), Role.class);
-            if(userRole == null)
+            if (userRole == null)
                 throw new RuntimeException("Error: Role is not found.");
             roles.add(userRole);
         } else {
@@ -149,7 +155,7 @@ public class AuthController {
                     case "admin":
                         userRole = mongo.findOne(
                                 Query.query(Criteria.where("name").is(ERole.ROLE_ADMIN)), Role.class);
-                        if(userRole == null)
+                        if (userRole == null)
                             throw new RuntimeException("Error: Role is not found.");
                         roles.add(userRole);
 
@@ -157,7 +163,7 @@ public class AuthController {
                     case "mod":
                         userRole = mongo.findOne(
                                 Query.query(Criteria.where("name").is(ERole.ROLE_MODERATOR)), Role.class);
-                        if(userRole == null)
+                        if (userRole == null)
                             throw new RuntimeException("Error: Role is not found.");
                         roles.add(userRole);
 
@@ -165,7 +171,7 @@ public class AuthController {
                     default:
                         userRole = mongo.findOne(
                                 Query.query(Criteria.where("name").is(ERole.ROLE_USER)), Role.class);
-                        if(userRole == null)
+                        if (userRole == null)
                             throw new RuntimeException("Error: Role is not found.");
                         roles.add(userRole);
                 }
