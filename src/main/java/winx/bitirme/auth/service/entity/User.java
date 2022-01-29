@@ -36,7 +36,7 @@ public class User {
     private EnumGender gender;
 
     @NotNull
-    @JsonFormat(pattern="dd-MM-yyyy")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date birthDate;
 
     @NotBlank
