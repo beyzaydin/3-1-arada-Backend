@@ -1,70 +1,49 @@
 package winx.bitirme.mongo.service.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class ClusteringQuestion {
-    //todo bunlari enum yapalim
-    public static String QUESTION_TYPE_SCORE = "score";
-    public static String QUESTION_TYPE_OPEN_ENDED = "openEnd";
-    public static String QUESTION_TYPE_DROPDOWN = "dropDown";
-    public static String QUESTION_TYPE_BOOLEAN = "boolean";
+
+
     @Id
     private String questionBody;
-    private String answerType;
+    private QuestionType answerType;
     private String[] potentialAnswer;
 
-    public ClusteringQuestion() {
 
-    }
 
-    public ClusteringQuestion(String questionBody, String answerType, String[] potentialAnswers) {
+    public ClusteringQuestion(String questionBody, QuestionType answerType, String[] potentialAnswers) {
         this.questionBody = questionBody;
         this.answerType = answerType;
         this.potentialAnswer = potentialAnswers;
     }
 
     //case when question type is "score"
-    public ClusteringQuestion(String questionBody, String answerType) {
-        if (answerType.equals(ClusteringQuestion.QUESTION_TYPE_SCORE)) {
+    public ClusteringQuestion(String questionBody, QuestionType answerType) {
+        if (answerType.equals(QuestionType.SCORE)) {
             this.questionBody = questionBody;
             this.answerType = answerType;
             String[] possibleAnswer = {"1", "2", "3", "4", "5"};
             this.potentialAnswer = possibleAnswer;
-        } else if (answerType.equals(ClusteringQuestion.QUESTION_TYPE_BOOLEAN)) {
+        } else if (answerType.equals(QuestionType.BOOLEAN)) {
             this.questionBody = questionBody;
             this.answerType = answerType;
             String[] possibleAnswer = {"True", "False"};
             this.potentialAnswer = possibleAnswer;
-        } else if (answerType.equals(ClusteringQuestion.QUESTION_TYPE_OPEN_ENDED)) {
+        } else if (answerType.equals(QuestionType.OPEN_ENDED)) {
             this.questionBody = questionBody;
             this.answerType = answerType;
         } else throw new IllegalArgumentException("Invalid construction parameters for ClusterinQuestion");
 
-    }
-
-    public String getQuestionBody() {
-        return this.questionBody;
-    }
-
-    public void setQuestionBody(String questionBody) {
-        this.questionBody = questionBody;
-    }
-
-    public String getAnswerType() {
-        return this.answerType;
-    }
-
-    public void setAnswerType(String answerType) {
-        this.answerType = answerType;
-    }
-
-    public String[] getPotentialAnswer() {
-        return this.potentialAnswer;
-    }
-
-    public void setPotentialAnswer(String[] potentialAnswer) {
-        this.potentialAnswer = potentialAnswer;
     }
 }
