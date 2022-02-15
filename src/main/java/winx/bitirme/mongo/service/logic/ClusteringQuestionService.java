@@ -11,6 +11,10 @@ import java.util.List;
 @Component
 public class ClusteringQuestionService {
     ClusteringQuestionRepository clusteringQuestionRepository;
+
+    public ClusteringQuestionService() {
+    }
+
     @Autowired
     public ClusteringQuestionService( ClusteringQuestionRepository clusteringQuestionRepository){
         this.clusteringQuestionRepository = clusteringQuestionRepository;
@@ -26,6 +30,8 @@ public class ClusteringQuestionService {
             toInsertInitially.add(new ClusteringQuestion("Tell me about how confident you have been feeling in your capabilities recently.", QuestionType.OPEN_ENDED));
             this.clusteringQuestionRepository.insert(toInsertInitially);
         }
+
+
 
 
     }

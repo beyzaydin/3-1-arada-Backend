@@ -1,17 +1,10 @@
 package winx.bitirme.mongo.service.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
 public class ClusteringQuestion {
 
 
@@ -20,7 +13,8 @@ public class ClusteringQuestion {
     private QuestionType answerType;
     private String[] potentialAnswer;
 
-
+    public ClusteringQuestion() {
+    }
 
     public ClusteringQuestion(String questionBody, QuestionType answerType, String[] potentialAnswers) {
         this.questionBody = questionBody;
@@ -45,5 +39,29 @@ public class ClusteringQuestion {
             this.answerType = answerType;
         } else throw new IllegalArgumentException("Invalid construction parameters for ClusterinQuestion");
 
+    }
+
+    public String getQuestionBody() {
+        return questionBody;
+    }
+
+    public void setQuestionBody(String questionBody) {
+        this.questionBody = questionBody;
+    }
+
+    public QuestionType getAnswerType() {
+        return answerType;
+    }
+
+    public void setAnswerType(QuestionType answerType) {
+        this.answerType = answerType;
+    }
+
+    public String[] getPotentialAnswer() {
+        return potentialAnswer;
+    }
+
+    public void setPotentialAnswer(String[] potentialAnswer) {
+        this.potentialAnswer = potentialAnswer;
     }
 }
