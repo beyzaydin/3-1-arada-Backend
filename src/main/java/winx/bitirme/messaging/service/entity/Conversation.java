@@ -1,15 +1,11 @@
 package winx.bitirme.messaging.service.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.List;
-@Getter
-@Setter
-@AllArgsConstructor
+
 public class Conversation {
 
 
@@ -18,6 +14,10 @@ public class Conversation {
     private boolean isClosed;
     public static long expireTime = 21600;//SECONDS
     private List<Message> conversation;
+
+    public Conversation() {
+    }
+
     public Conversation(ConversationId id){
         this.isClosed = false;
         this.conversation = new ArrayList<>();
@@ -28,5 +28,37 @@ public class Conversation {
     }
     public void addMessage(Message toAdd){
         this.conversation.add(toAdd);
+    }
+
+    public ConversationId getId() {
+        return id;
+    }
+
+    public void setId(ConversationId id) {
+        this.id = id;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
+    }
+
+    public static long getExpireTime() {
+        return expireTime;
+    }
+
+    public static void setExpireTime(long expireTime) {
+        Conversation.expireTime = expireTime;
+    }
+
+    public List<Message> getConversation() {
+        return conversation;
+    }
+
+    public void setConversation(List<Message> conversation) {
+        this.conversation = conversation;
     }
 }

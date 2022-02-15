@@ -1,13 +1,9 @@
 package winx.bitirme.mongo.client.model;
 
 import com.sun.istack.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
+
+
 public class ExampleModel {
     private Long id;
 
@@ -17,6 +13,9 @@ public class ExampleModel {
     public ExampleModel(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public ExampleModel() {
     }
 
     public Long getId() {
