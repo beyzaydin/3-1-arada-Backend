@@ -8,7 +8,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Size;
 
-@Document(collection = "auth")
+@Document(collection = "roles")
 public class Role {
     @Transient
     public static final String SEQUENCE_NAME = "role_sequence";

@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = "examples")
-
 public class ExampleEntity {
     @Transient
     public static final String SEQUENCE_NAME = "examples_sequence";

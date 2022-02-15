@@ -34,7 +34,7 @@ public class SignupRequest {
     @Size(max = 50)
     private String surname;
 
-    @NotNull
+    //@NotNull
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
 

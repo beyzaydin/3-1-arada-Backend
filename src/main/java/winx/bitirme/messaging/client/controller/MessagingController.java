@@ -27,7 +27,7 @@ public class MessagingController {
     public List<ConversationSummary> getGeneralConversationHistory(long user, long respondent){
        return this.messagingMediator.constructConversationSummary(user);
     }
-    @RequestMapping(method = RequestMethod.POST, path="/getHistory", consumes="application/json", produces = "application/json")
+    @RequestMapping(method = RequestMethod.POST, path="/get-history", consumes="application/json", produces = "application/json")
     public Conversation getConversation(long userId, long respondentId){
         return this.messagingMediator.getConversationHistory(userId,respondentId);
     }
