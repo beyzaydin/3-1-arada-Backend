@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class SignupRequest {
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 250)
     @Email
     private String email;
 
@@ -36,6 +36,7 @@ public class SignupRequest {
 
     @NotNull
     private EnumGender gender;
+
 
     public String getEmail() {
         return email;

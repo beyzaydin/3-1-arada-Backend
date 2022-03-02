@@ -2,7 +2,6 @@ package winx.bitirme.auth.client.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import winx.bitirme.auth.client.model.*;
+import winx.bitirme.auth.client.model.JwtResponse;
+import winx.bitirme.auth.client.model.LoginRequest;
+import winx.bitirme.auth.client.model.MessageResponse;
+import winx.bitirme.auth.client.model.SignupRequest;
 import winx.bitirme.auth.service.entity.ERole;
 import winx.bitirme.auth.service.entity.Role;
 import winx.bitirme.auth.service.entity.User;
@@ -63,7 +65,6 @@ public class AuthController {
         this.encoder = encoder;
         this.jwtUtils = jwtUtils;
         this.sequenceGeneratorService = sequenceGeneratorService;
-
     }
 
     @PostMapping("/signin")
@@ -85,6 +86,7 @@ public class AuthController {
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 roles));
+
     }
 
     @PostMapping("/role")
