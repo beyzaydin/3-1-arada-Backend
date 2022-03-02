@@ -89,17 +89,6 @@ public class AuthController {
 
     }
 
-    @GetMapping("/test")
-    public User test() {
-        User user = new User();
-        user.setId(1L);
-        user.setEmail("beyzaaydin@etu.edu.tr");
-        user.setUsername("baydin");
-        user.setPassword("12345");
-        Role role = new Role();
-        return user;
-    }
-
     @PostMapping("/role")
     public Role addRole(@RequestBody Role role) {
         long id = sequenceGeneratorService.generateSequence(Role.SEQUENCE_NAME);
@@ -111,7 +100,7 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
         if (mongo.exists(
-                Query.query(Criteria.where("username").is(signUpRequest.getUsername())), User.class)) {
+                Query.query(Criteria.where("username").is(signUpRequest.getEmail())), User.class)) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
@@ -125,7 +114,7 @@ public class AuthController {
         }
 
         // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
+        User user = new User(signUpRequest.getEmail(),
                 signUpRequest.getName(),
                 signUpRequest.getSurname(),
                 signUpRequest.getBirthDate(),

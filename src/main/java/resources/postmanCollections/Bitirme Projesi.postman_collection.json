@@ -165,7 +165,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/signin",
+							"raw": "http://localhost:8080/user/signin",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -195,7 +195,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/role",
+							"raw": "http://localhost:8080/user/role",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -225,7 +225,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/signup",
+							"raw": "http://localhost:8080/user/signup",
 							"protocol": "http",
 							"host": [
 								"localhost"
