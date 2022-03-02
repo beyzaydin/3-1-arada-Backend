@@ -12,10 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import winx.bitirme.auth.client.model.JwtResponse;
-import winx.bitirme.auth.client.model.LoginRequest;
-import winx.bitirme.auth.client.model.MessageResponse;
-import winx.bitirme.auth.client.model.SignupRequest;
+import winx.bitirme.auth.client.model.*;
 import winx.bitirme.auth.service.entity.ERole;
 import winx.bitirme.auth.service.entity.Role;
 import winx.bitirme.auth.service.entity.User;
@@ -33,7 +30,7 @@ import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/user")
 public class AuthController {
 
     private final MongoOperations mongo;
@@ -51,6 +48,7 @@ public class AuthController {
     private final JwtUtils jwtUtils;
 
     private final SequenceGeneratorService sequenceGeneratorService;
+
 
     @Autowired
     public AuthController(MongoOperations mongo,
