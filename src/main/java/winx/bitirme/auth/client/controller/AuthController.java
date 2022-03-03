@@ -5,7 +5,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,12 +33,10 @@ import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/user")
 public class AuthController {
 
     private final MongoOperations mongo;
-
-    private final MongoTemplate mongoTemplate;
 
     private final AuthenticationManager authenticationManager;
 
@@ -55,7 +52,6 @@ public class AuthController {
 
     @Autowired
     public AuthController(MongoOperations mongo,
-                          MongoTemplate mongoTemplate,
                           AuthenticationManager authenticationManager,
                           UserRepository userRepository,
                           RoleRepository roleRepository,
@@ -63,7 +59,6 @@ public class AuthController {
                           JwtUtils jwtUtils,
                           SequenceGeneratorService sequenceGeneratorService) {
         this.mongo = mongo;
-        this.mongoTemplate = mongoTemplate;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -92,17 +87,7 @@ public class AuthController {
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 roles));
-    }
 
-    @GetMapping("/test")
-    public User test() {
-        User user = new User();
-        user.setId(1L);
-        user.setEmail("beyzaaydin@etu.edu.tr");
-        user.setUsername("baydin");
-        user.setPassword("12345");
-        Role role = new Role();
-        return user;
     }
 
     @PostMapping("/role")

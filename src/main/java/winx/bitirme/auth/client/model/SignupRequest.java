@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class SignupRequest {
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 250)
     @Email
     private String email;
 

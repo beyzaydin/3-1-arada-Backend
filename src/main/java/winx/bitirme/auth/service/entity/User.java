@@ -21,7 +21,7 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(max = 250)
     private String username;
 
     @NotBlank
@@ -40,7 +40,7 @@ public class User {
     private Date birthDate;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 250)
     @Email
     private String email;
 
