@@ -1,8 +1,10 @@
 package winx.bitirme.auth.client.controller;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,7 @@ import winx.bitirme.auth.service.utils.JwtUtils;
 import winx.bitirme.mongo.service.logic.SequenceGeneratorService;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,20 +39,16 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/user")
 public class AuthController {
-
+    private static int jwtExpirationMs = 86400000;
     private final MongoOperations mongo;
-
     private final AuthenticationManager authenticationManager;
-
     private final UserRepository userRepository;
-
     private final RoleRepository roleRepository;
-
     private final PasswordEncoder encoder;
-
     private final JwtUtils jwtUtils;
-
     private final SequenceGeneratorService sequenceGeneratorService;
+    @Value("$ {bezkoder.app.jwtSecret} ")
+    private String jwtSecret;
 
     @Autowired
     public AuthController(MongoOperations mongo,
@@ -99,7 +98,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (mongo.exists(
                 Query.query(Criteria.where("email").is(signUpRequest.getEmail())), User.class)) {
             return ResponseEntity
@@ -162,6 +161,13 @@ public class AuthController {
         user.setId(id);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Bearer " + Jwts.builder()
+                        .setSubject(user.getUsername())
+                        .setIssuedAt(new Date())
+                        .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                        .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                        .compact());
     }
 }
