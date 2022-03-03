@@ -2,7 +2,8 @@ package winx.bitirme.auth.service.entity;
 
 public enum EnumGender {
     FEMALE("F"),
-    MALE("M");
+    MALE("M"),
+    OTHER("O");
 
     private String code;
 
