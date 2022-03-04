@@ -1,21 +1,32 @@
 package winx.bitirme.sleep.client.controller;
 
+
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import winx.bitirme.sleep.client.model.SleepChartData;
 
 @RestController
 @RequestMapping("/sleep")
 @CrossOrigin("http://localhost:3000")
 public class SleepDataController {
 
-    public SleepDataController() {
+    @PostMapping(value = "/deneme", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public String deneme(@RequestBody SleepChartData sleepChartData) {
+        return "{\n" +
+                "                label: \"Monday\",\n" +
+                "                data: [2, 9, 3, 5, 2, 3],\n" +
+                "                borderWidth: 1\n" +
+                "            },\n" +
+                "            {\n" +
+                "                label: \"Tuesday\",\n" +
+                "                data: [1, 8, 10, 7, 6, 3, 5, 6, 1, 0, 0, 0, 0],\n" +
+                "                borderWidth: 1\n" +
+                "            }";
     }
 
     @GetMapping(value = "/deneme", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String deneme(){
+    public String deneme() {
         return "{\n" +
                 "    \"timeData\": [\n" +
                 "        \"6/12\",\n" +
