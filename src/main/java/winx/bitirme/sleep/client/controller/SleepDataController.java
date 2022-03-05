@@ -2,7 +2,6 @@ package winx.bitirme.sleep.client.controller;
 
 
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import winx.bitirme.sleep.client.model.SleepChartData;
 
@@ -13,7 +12,7 @@ public class SleepDataController {
 
     @PostMapping(value = "/deneme", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String deneme(@RequestBody SleepChartData sleepChartData) {
-        return "{\n" +
+        return "[{\n" +
                 "                label: \"Monday\",\n" +
                 "                data: [2, 9, 3, 5, 2, 3],\n" +
                 "                borderWidth: 1\n" +
@@ -22,7 +21,7 @@ public class SleepDataController {
                 "                label: \"Tuesday\",\n" +
                 "                data: [1, 8, 10, 7, 6, 3, 5, 6, 1, 0, 0, 0, 0],\n" +
                 "                borderWidth: 1\n" +
-                "            }";
+                "            }]";
     }
 
     @GetMapping(value = "/deneme", produces = MediaType.APPLICATION_JSON_VALUE)
