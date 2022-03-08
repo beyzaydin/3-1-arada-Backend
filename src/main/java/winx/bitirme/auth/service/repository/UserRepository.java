@@ -6,4 +6,5 @@ import winx.bitirme.auth.service.entity.User;
 
 @Repository
 public interface UserRepository extends MongoRepository<User, Long> {
+    User findByEmail(String name);
 }
