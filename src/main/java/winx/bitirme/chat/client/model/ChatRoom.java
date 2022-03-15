@@ -1,6 +1,7 @@
 package winx.bitirme.chat.client.model;
 
 
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.OffsetDateTime;
@@ -8,6 +9,10 @@ import java.util.UUID;
 
 @Document(collection = "chat-room")
 public class ChatRoom {
+
+    @Transient
+    public static final String SEQUENCE_NAME = "user_sequence";
+    private long id;
     private Boolean isActive;
     private String user1;
     private String user2;
@@ -17,6 +22,14 @@ public class ChatRoom {
 
     public ChatRoom() {
         chatId = UUID.randomUUID().toString();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Boolean getActive() {

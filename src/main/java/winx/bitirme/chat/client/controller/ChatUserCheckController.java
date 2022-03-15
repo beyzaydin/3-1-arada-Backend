@@ -4,54 +4,73 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.web.bind.annotation.*;
 import winx.bitirme.auth.client.model.MessageResponse;
 import winx.bitirme.auth.service.logic.UserDetailsImpl;
+import winx.bitirme.auth.service.repository.UserRepository;
 import winx.bitirme.chat.client.model.ChatRoom;
 import winx.bitirme.chat.service.logic.ChatService;
 import winx.bitirme.chat.service.repository.ChatRoomRepository;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 @RestController
-@RequestMapping("/chat/connect")
-@CrossOrigin
+@RequestMapping("/chat")
+@CrossOrigin()
 public class ChatUserCheckController {
 
     private final ChatRoomRepository repository;
     private final ChatService service;
+    private final UserRepository userRepository;
 
     @Autowired
     public ChatUserCheckController(ChatRoomRepository repository,
-                                   ChatService service) {
+                                   ChatService service, UserRepository userRepository) {
         this.repository = repository;
         this.service = service;
+        this.userRepository = userRepository;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    private ResponseEntity checkUser() {
-        UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (repository.findByUser1(user.getUsername()) == null && repository.findByUser2(user.getUsername()) == null) {
-            UserDetailsImpl val = service.handleWaitingUsers();
-            if (val == null) {
-                //todo timeout 1dk
-                //todo thread
-                //todo threat safe hale getir
-                return ResponseEntity
-                        .status(HttpStatus.REQUEST_TIMEOUT)
-                        .body(new MessageResponse("Another user can not be found for chat."));
-            } else {
-                ChatRoom chatRoom = new ChatRoom();
-                chatRoom.setUser1(user.getUsername());
-                chatRoom.setUser2(val.getUsername());
-                chatRoom.setActive(true);
-                return ResponseEntity.ok(chatRoom);
-            }
-        }
-        return ResponseEntity
-                .status(HttpStatus.I_AM_A_TEAPOT)
-                .body("Chat already open in another browser.");
+
+    @GetMapping(value = "/connect/{username}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity checkUser(@PathVariable String username) throws InterruptedException {
+        return service.check(username);
     }
 }
+ /*ExecutorService executor = Executors.newFixedThreadPool(1);
+                AtomicReference<ChatRoom> chatRoom = null;
+                Callable<String> callableTask = () -> {
+                    while (!executor.isShutdown()) {
+                        UserDetailsImpl res = service.handleWaitingUsers(user);
+                        if (res == null)
+                            continue;
+                        else {
+                            chatRoom.set(new ChatRoom());
+                            chatRoom.get().setUser1(user.getUsername());
+                            chatRoom.get().setUser2(res.getUsername());
+                            chatRoom.get().setActive(true);
+                        }
+                    }
+                    service.removeUser(user);
+                    return null;
+                };
+                List<Callable<String>> callableTasks = new ArrayList<>();
+                callableTasks.add(callableTask);
+                List<Future<String>> futures = executor.invokeAll(callableTasks, 1, TimeUnit.MINUTES);
+
+                executor.shutdown();
+                try {
+                    if (!executor.awaitTermination(100, TimeUnit.SECONDS)) {
+                        executor.shutdownNow();
+                    }
+                } catch (InterruptedException e) {
+                    executor.shutdownNow();
+                }
+                if (chatRoom == null)
+                    return ResponseEntity
+                            .status(HttpStatus.REQUEST_TIMEOUT)
+                            .body(new MessageResponse("Another user can not be found for chat."));
+
+                return ResponseEntity.ok(chatRoom);*/
