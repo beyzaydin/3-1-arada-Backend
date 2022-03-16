@@ -8,6 +8,8 @@ import winx.bitirme.mongo.service.repository.ClusteringQuestionRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Component
 public class ClusteringQuestionService {
     ClusteringQuestionRepository clusteringQuestionRepository;
@@ -30,10 +32,6 @@ public class ClusteringQuestionService {
             toInsertInitially.add(new ClusteringQuestion("Tell me about how confident you have been feeling in your capabilities recently.", QuestionType.OPEN_ENDED));
             this.clusteringQuestionRepository.insert(toInsertInitially);
         }
-
-
-
-
     }
     public ClusteringQuestion[] getAllQuestions(){
         List<ClusteringQuestion> query =this.clusteringQuestionRepository.findAll();
@@ -42,5 +40,16 @@ public class ClusteringQuestionService {
             result[i] = query.get(i);
         }
         return result;
+    }
+    public boolean deleteQuestion(String questionBody){
+        Optional<ClusteringQuestion> question = this.clusteringQuestionRepository.findById(questionBody);
+        if (question.isPresent()){
+            this.clusteringQuestionRepository.delete(question.get());
+            return true;
+        }
+        else return false;
+    }
+    public void saveQuestion(ClusteringQuestion toSave){
+        this.clusteringQuestionRepository.save(toSave);
     }
 }
