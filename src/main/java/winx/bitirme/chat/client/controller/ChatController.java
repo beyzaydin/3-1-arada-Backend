@@ -11,8 +11,12 @@ import winx.bitirme.chat.client.model.Message;
 @RestController
 public class ChatController {
 
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
     @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    public ChatController(SimpMessagingTemplate simpMessagingTemplate) {
+        this.simpMessagingTemplate = simpMessagingTemplate;
+    }
 
     @MessageMapping("/message")
     @SendTo("/chatroom/public")
@@ -23,7 +27,6 @@ public class ChatController {
     @MessageMapping("/private-message")
     public Message recMessage(@Payload Message message) {
         simpMessagingTemplate.convertAndSendToUser(message.getReceiverName(), "/private", message);
-        System.out.println(message.toString());
         return message;
     }
 }

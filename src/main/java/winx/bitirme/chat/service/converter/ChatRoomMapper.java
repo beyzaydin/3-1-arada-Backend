@@ -1,20 +1,25 @@
 package winx.bitirme.chat.service.converter;
 
 import org.mapstruct.Mapper;
-import winx.bitirme.mongo.client.model.ExampleModel;
-import winx.bitirme.mongo.service.entity.ExampleEntity;
+import org.mapstruct.Mapping;
+import winx.bitirme.chat.client.model.ChatRoomModel;
+import winx.bitirme.chat.service.entity.ChatRoom;
 
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface ChatRoomMapper {
-    ExampleModel convertToModel(ExampleEntity entity);
+    @Mapping(source = "entity.user1", target = "sender")
+    @Mapping(source = "entity.user2", target = "receiver")
+    ChatRoomModel convertToModel(ChatRoom entity);
 
-    List<ExampleModel> convertToModelList(List<ExampleEntity> entities);
+    List<ChatRoomModel> convertToModelList(List<ChatRoom> entities);
 
-    ExampleEntity convertToEntity(ExampleModel model);
+    @Mapping(source = "model.sender", target = "user1")
+    @Mapping(source = "model.receiver", target = "user2")
+    ChatRoom convertToEntity(ChatRoomModel model);
 
-    List<ExampleEntity> convertToEntityList(List<ExampleModel> models);
+    List<ChatRoom> convertToEntityList(List<ChatRoomModel> models);
 }
 
 

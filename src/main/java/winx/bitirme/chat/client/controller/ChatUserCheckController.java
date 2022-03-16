@@ -4,25 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import winx.bitirme.auth.service.repository.UserRepository;
 import winx.bitirme.chat.service.logic.ChatService;
-import winx.bitirme.chat.service.repository.ChatRoomRepository;
 
 @RestController
 @RequestMapping("/chat")
 @CrossOrigin()
 public class ChatUserCheckController {
 
-    private final ChatRoomRepository repository;
     private final ChatService service;
-    private final UserRepository userRepository;
+
 
     @Autowired
-    public ChatUserCheckController(ChatRoomRepository repository,
-                                   ChatService service, UserRepository userRepository) {
-        this.repository = repository;
+    public ChatUserCheckController(ChatService service) {
         this.service = service;
-        this.userRepository = userRepository;
     }
 
 

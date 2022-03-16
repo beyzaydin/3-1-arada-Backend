@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import winx.bitirme.auth.client.model.MessageResponse;
 import winx.bitirme.auth.service.logic.UserDetailsImpl;
 import winx.bitirme.auth.service.repository.UserRepository;
+import winx.bitirme.chat.service.converter.ChatRoomMapper;
 import winx.bitirme.chat.service.entity.ChatRoom;
 import winx.bitirme.chat.service.repository.ChatRoomRepository;
 import winx.bitirme.mongo.service.logic.SequenceGeneratorService;
@@ -23,15 +24,19 @@ public class ChatService {
     private final ChatRoomRepository repository;
     private final UserRepository userRepository;
     private final SequenceGeneratorService sequenceGeneratorService;
-    private AtomicReference<Queue<UserDetailsImpl>> waitingUsers;
+    private final AtomicReference<Queue<UserDetailsImpl>> waitingUsers;
+    private final ChatRoomMapper mapper;
 
     @Autowired
     public ChatService(ChatRoomRepository repository,
-                       UserRepository userRepository, SequenceGeneratorService sequenceGeneratorService) {
+                       UserRepository userRepository,
+                       SequenceGeneratorService sequenceGeneratorService,
+                       ChatRoomMapper mapper) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.sequenceGeneratorService = sequenceGeneratorService;
-        Queue<UserDetailsImpl> queue = new LinkedList<UserDetailsImpl>();
+        this.mapper = mapper;
+        Queue<UserDetailsImpl> queue = new LinkedList<>();
         this.waitingUsers = new AtomicReference<>(queue);
     }
 
@@ -41,7 +46,7 @@ public class ChatService {
         if (waitingUsers.get().size() >= 1) {
             UserDetailsImpl pop = waitingUsers.get().poll();
             //if (pop != null) { NULL KONTROLU GEREKLI DEGIL ZATEN SIZE KNT YAPILDI
-            if (pop.getUsername().equals(user.getUsername())) {
+            if (pop != null && pop.getUsername().equals(user.getUsername())) {
                 UserDetailsImpl tmp = waitingUsers.get().poll();
                 waitingUsers.get().add(pop);
                 pop = tmp;
@@ -67,32 +72,34 @@ public class ChatService {
             ExecutorService executor = Executors.newFixedThreadPool(2);
             Callable<String> callableTask = () -> {
                 while (!executor.isShutdown()) {
-                    if(checkDb(user.getUsername())){
+                    if (checkDb(user.getUsername())) {
                         chatRoom.set(repository.findByUser2(user.getUsername()));
                         String sender, receiver;
                         sender = chatRoom.get().getUser1();
                         receiver = chatRoom.get().getUser2();
+                        long id = sequenceGeneratorService.generateSequence(ChatRoom.SEQUENCE_NAME);
+                        chatRoom.get().setId(id);
                         chatRoom.get().setUser1(receiver);
                         chatRoom.get().setUser2(sender);
                         repository.save(chatRoom.get());
+                        removeUser(user);
                         executor.shutdown();
                         break;
                     }
                 }
-                removeUser(user);
                 return null;
             };
             List<Callable<String>> callableTasks = new ArrayList<>();
             callableTasks.add(callableTask);
-            List<Future<String>> futures = executor.invokeAll(callableTasks, 1, TimeUnit.MINUTES);
+            executor.invokeAll(callableTasks, 1, TimeUnit.MINUTES);
 
             executor.shutdown();
-            if (!chatRoom.get().getUser1().equals(user.getUsername())){
+            if (!chatRoom.get().getUser1().equals(user.getUsername())) {
                 return ResponseEntity
                         .status(HttpStatus.REQUEST_TIMEOUT)
                         .body(new MessageResponse("Another user can not be found for chat."));
             }
-            return ResponseEntity.ok(chatRoom.get());
+            return ResponseEntity.ok(mapper.convertToModel(chatRoom.get()));
         }
         long id = sequenceGeneratorService.generateSequence(ChatRoom.SEQUENCE_NAME);
         chatRoom.get().setId(id);
@@ -100,10 +107,10 @@ public class ChatService {
         chatRoom.get().setUser2(rec.getUsername());
         chatRoom.get().setActive(true);
         repository.save(chatRoom.get());
-        return ResponseEntity.ok(chatRoom);
+        return ResponseEntity.ok(mapper.convertToModel(chatRoom.get()));
     }
 
-    public Boolean removeUser(UserDetailsImpl user) {
+    private Boolean removeUser(UserDetailsImpl user) {
         return waitingUsers.get().remove(user);
     }
 

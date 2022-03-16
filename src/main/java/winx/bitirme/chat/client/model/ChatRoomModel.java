@@ -5,8 +5,8 @@ import java.time.OffsetDateTime;
 public class ChatRoomModel {
     private long id;
     private Boolean isActive;
-    private String user1;
-    private String user2;
+    private String sender;
+    private String receiver;
     private String chatId;
     private OffsetDateTime startTime;
     private OffsetDateTime endTime; //todo
@@ -52,19 +52,19 @@ public class ChatRoomModel {
         this.endTime = endTime;
     }
 
-    public String getUser1() {
-        return user1;
+    public String getSender() {
+        return sender;
     }
 
-    public void setUser1(String user1) {
-        this.user1 = user1;
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
-    public String getUser2() {
-        return user2;
+    public String getReceiver() {
+        return receiver;
     }
 
-    public void setUser2(String user2) {
-        this.user2 = user2;
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 }
