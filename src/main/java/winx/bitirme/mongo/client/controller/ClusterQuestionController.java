@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import winx.bitirme.mongo.client.model.AddQuestionRequest;
 import winx.bitirme.mongo.client.model.AnswerSubmitRequest;
 import winx.bitirme.mongo.client.model.QuestionResponse;
 
@@ -28,12 +29,28 @@ public class ClusterQuestionController {
     @ResponseBody
     @CrossOrigin(origins = "http://localhost:3000")
     public QuestionResponse getQuestions() {
-        QuestionResponse toReturn =  new QuestionResponse(this.clusteringQuestionService.getAllQuestions());
-        return toReturn;
+        return new QuestionResponse(this.clusteringQuestionService.getAllQuestions());
     }
     @PostMapping(value = "/submitAnswers",consumes="application/json")
     @CrossOrigin(origins = "http://localhost:3000")
     public void submitAnswers(@RequestBody AnswerSubmitRequest payload){
         this.answerService.submitAnswers(payload.getPaylaod());
+    }
+    @PostMapping(value ="/deleteQuestion", consumes="application/json", produces="application/json")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public void deleteQuestion(@RequestBody String questionBody){
+        this.clusteringQuestionService.deleteQuestion(questionBody);
+    }
+    @PostMapping(value = "/addQuestion", consumes="application/json", produces="application/json")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public boolean addQuestion(@RequestBody AddQuestionRequest payload){
+        try{
+            this.clusteringQuestionService.saveQuestion(payload.constructQuestion());
+            return true;
+        }
+        catch(Exception e){
+            return false;
+        }
+
     }
 }
