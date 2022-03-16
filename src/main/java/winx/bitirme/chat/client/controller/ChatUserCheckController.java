@@ -1,19 +1,12 @@
 package winx.bitirme.chat.client.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
-import winx.bitirme.auth.client.model.MessageResponse;
-import winx.bitirme.auth.service.logic.UserDetailsImpl;
 import winx.bitirme.auth.service.repository.UserRepository;
-import winx.bitirme.chat.client.model.ChatRoom;
 import winx.bitirme.chat.service.logic.ChatService;
 import winx.bitirme.chat.service.repository.ChatRoomRepository;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 @RequestMapping("/chat")
