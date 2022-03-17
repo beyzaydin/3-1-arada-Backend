@@ -6,6 +6,7 @@ public class Message {
     private String message;
     private String date;
     private Status status;
+    private Long id;
 
     public Message(String senderName, String receiverName, String message, String date, Status status) {
         this.senderName = senderName;
@@ -13,6 +14,14 @@ public class Message {
         this.message = message;
         this.date = date;
         this.status = status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getSenderName() {
