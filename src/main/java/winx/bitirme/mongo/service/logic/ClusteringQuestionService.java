@@ -2,6 +2,8 @@ package winx.bitirme.mongo.service.logic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import winx.bitirme.auth.service.entity.User;
+import winx.bitirme.auth.service.repository.UserRepository;
 import winx.bitirme.mongo.service.entity.ClusteringQuestion;
 import winx.bitirme.mongo.service.entity.QuestionType;
 import winx.bitirme.mongo.service.repository.ClusteringQuestionRepository;
@@ -13,12 +15,13 @@ import java.util.Optional;
 @Component
 public class ClusteringQuestionService {
     ClusteringQuestionRepository clusteringQuestionRepository;
+    UserRepository userRepository;
 
     public ClusteringQuestionService() {
     }
 
     @Autowired
-    public ClusteringQuestionService( ClusteringQuestionRepository clusteringQuestionRepository){
+    public ClusteringQuestionService(ClusteringQuestionRepository clusteringQuestionRepository, UserRepository userRepository){
         this.clusteringQuestionRepository = clusteringQuestionRepository;
         //Since questions are uncertain in the development process,
         //some dummy questions are constructed just to verify functionality
@@ -32,6 +35,7 @@ public class ClusteringQuestionService {
             toInsertInitially.add(new ClusteringQuestion("Tell me about how confident you have been feeling in your capabilities recently.", QuestionType.OPEN_ENDED));
             this.clusteringQuestionRepository.insert(toInsertInitially);
         }
+        this.userRepository = userRepository;
     }
     public ClusteringQuestion[] getAllQuestions(){
         List<ClusteringQuestion> query =this.clusteringQuestionRepository.findAll();
@@ -51,5 +55,16 @@ public class ClusteringQuestionService {
     }
     public void saveQuestion(ClusteringQuestion toSave){
         this.clusteringQuestionRepository.save(toSave);
+    }
+    public boolean questionExists(String questionBody){
+        return this.clusteringQuestionRepository.findById(questionBody).isPresent();
+    }
+    public ClusteringQuestion getQuestionIfExists(String questionBody){
+        Optional<ClusteringQuestion> optionalClusteringQuestion = this.clusteringQuestionRepository.findById(questionBody);
+        ClusteringQuestion result = optionalClusteringQuestion.isPresent() ? optionalClusteringQuestion.get() : null;
+        return result;
+    }
+    public User findUserByEmailIfExists(String email){
+        return this.userRepository.findByEmail(email);
     }
 }
