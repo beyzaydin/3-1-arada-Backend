@@ -7,18 +7,16 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
-import winx.bitirme.auth.service.entity.Role;
 import winx.bitirme.chat.client.model.Message;
 import winx.bitirme.mongo.service.logic.SequenceGeneratorService;
 
 @RestController
 public class ChatController {
 
-    private final SimpMessagingTemplate simpMessagingTemplate;
-    private final SequenceGeneratorService sequenceGeneratorService;
-
     @Transient
     public static final String SEQUENCE_NAME = "chat_message_sequence";
+    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final SequenceGeneratorService sequenceGeneratorService;
 
     @Autowired
     public ChatController(SimpMessagingTemplate simpMessagingTemplate, SequenceGeneratorService sequenceGeneratorService) {

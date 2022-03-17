@@ -110,7 +110,7 @@ public class ChatService {
         return ResponseEntity.ok(mapper.convertToModel(chatRoom.get()));
     }
 
-    private Boolean removeUser(UserDetailsImpl user) {
+    public Boolean removeUser(UserDetailsImpl user) {
         return waitingUsers.get().remove(user);
     }
 
