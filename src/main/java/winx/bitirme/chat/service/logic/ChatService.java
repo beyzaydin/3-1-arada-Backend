@@ -16,7 +16,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -94,6 +97,7 @@ public class ChatService {
             executor.invokeAll(callableTasks, 1, TimeUnit.MINUTES);
 
             executor.shutdown();
+            //todo null pointer exception geliyor
             if (!chatRoom.get().getUser1().equals(user.getUsername())) {
                 return ResponseEntity
                         .status(HttpStatus.REQUEST_TIMEOUT)
@@ -114,33 +118,16 @@ public class ChatService {
         return waitingUsers.get().remove(user);
     }
 
+    public void removeSocketInfo(UserDetailsImpl user) {
+        ChatRoom user1 = repository.findByUser1(user.getUsername());
+        ChatRoom user2 = repository.findByUser2(user.getUsername());
+        if (user1 != null)
+            repository.delete(user1);
+        if (user2 != null)
+            repository.delete(user2);
+    }
+
     private Boolean checkDb(String username) {
         return (repository.existsByUser1(username) || repository.existsByUser2(username));
     }
 }
-
-
-
-        /*boolean flag = false;
-                long startTime = System.currentTimeMillis(); //fetch starting time
-                AtomicReference<ChatRoom> chatRoom = new AtomicReference<ChatRoom>(new ChatRoom());
-                while (false || (System.currentTimeMillis() - startTime) < 10000) {
-                    UserDetailsImpl res = handleWaitingUsers(user);
-                    if (res == null)
-                        continue;
-                    else {
-                        flag = true;
-                        chatRoom.get().setUser1(user.getUsername());
-                        chatRoom.get().setUser2(res.getUsername());
-                        chatRoom.get().setActive(true);
-                        break;
-                    }
-                }
-
-                if (!flag) {
-                    removeUser(user);
-                    return ResponseEntity
-                            .status(HttpStatus.REQUEST_TIMEOUT)
-                            .body(new MessageResponse("Another user can not be found for chat."));
-                }
-                return ResponseEntity.ok(chatRoom);*/
