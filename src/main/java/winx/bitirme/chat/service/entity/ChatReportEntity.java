@@ -20,10 +20,10 @@ public class ChatReportEntity {
 
     private EnumChartReport enumChartReport;
 
-    private OffsetDateTime reportDate;
-
     @Size(max = 250)
     private String explanation;
+
+    private OffsetDateTime reportDate;
 
     public long getId() {
         return id;
