@@ -27,7 +27,6 @@ public class CustomHandshakeHandler extends DefaultHandshakeHandler {
             WebSocketHandler wsHandler,
             Map<String, Object> attributes
     ) {
-        // Generate principal with UUID as name
         String cookie = ((ServletServerHttpRequest) request).getHeaders().get("cookie").get(0);
         int ind = (cookie.indexOf("="));
         String token = cookie.substring(ind + 1);

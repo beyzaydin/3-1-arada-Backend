@@ -48,13 +48,11 @@ public class ChatService {
         //todo kendini yollamasın
         if (waitingUsers.get().size() >= 1) {
             UserDetailsImpl pop = waitingUsers.get().poll();
-            //if (pop != null) { NULL KONTROLU GEREKLI DEGIL ZATEN SIZE KNT YAPILDI
             if (pop != null && pop.getUsername().equals(user.getUsername())) {
                 UserDetailsImpl tmp = waitingUsers.get().poll();
                 waitingUsers.get().add(pop);
                 pop = tmp;
             }
-            //}
             return pop;
         } else {
             waitingUsers.get().add(user);
@@ -97,7 +95,6 @@ public class ChatService {
             executor.invokeAll(callableTasks, 1, TimeUnit.MINUTES);
 
             executor.shutdown();
-            //todo null pointer exception geliyor
             if (!chatRoom.get().getUser1().equals(user.getUsername())) {
                 return ResponseEntity
                         .status(HttpStatus.REQUEST_TIMEOUT)
@@ -118,16 +115,18 @@ public class ChatService {
         return waitingUsers.get().remove(user);
     }
 
-    public void removeSocketInfo(UserDetailsImpl user) {
-        ChatRoom user1 = repository.findByUser1(user.getUsername());
-        ChatRoom user2 = repository.findByUser2(user.getUsername());
-        if (user1 != null)
-            repository.delete(user1);
-        if (user2 != null)
+    public ResponseEntity<String> removeSocketInfo(String user) {
+        ChatRoom sender = repository.findByUser1(user);
+        ChatRoom user2 = repository.findByUser2(user);
+        if (sender != null && user2 != null) {
+            repository.delete(sender);
             repository.delete(user2);
+            return ResponseEntity.ok().body("The session succesfully ended");
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("The session is already aborted");
     }
 
-    private Boolean checkDb(String username) {
+    public Boolean checkDb(String username) {
         return (repository.existsByUser1(username) || repository.existsByUser2(username));
     }
 }
