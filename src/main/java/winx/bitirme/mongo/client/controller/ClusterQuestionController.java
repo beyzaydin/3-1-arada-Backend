@@ -11,15 +11,13 @@ import winx.bitirme.mongo.client.model.AnswerSubmitRequest;
 import winx.bitirme.mongo.client.model.DeleteQuestionRequest;
 import winx.bitirme.mongo.client.model.QuestionResponse;
 
-import winx.bitirme.mongo.service.entity.Answer;
-import winx.bitirme.mongo.service.entity.ClusteringForm;
-import winx.bitirme.mongo.service.entity.ClusteringQuestion;
-import winx.bitirme.mongo.service.entity.SubmittedAnswer;
-import winx.bitirme.mongo.service.logic.AnswerService;
+import winx.bitirme.mongo.service.entity.*;
 import winx.bitirme.mongo.service.logic.ClusteringFormService;
 import winx.bitirme.mongo.service.logic.ClusteringQuestionService;
+import winx.bitirme.mongo.service.repository.ClusteredFormRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -27,12 +25,14 @@ import java.util.ArrayList;
 public class ClusterQuestionController {
     final ClusteringQuestionService clusteringQuestionService;
     final ClusteringFormService clusteringFormService;
+    final ClusteredFormRepository clusteredFormRepository;
     final ObjectMapper mapper;
     @Autowired
-    public ClusterQuestionController(ClusteringQuestionService clusteringQuestionService, ObjectMapper mapper, ClusteringFormService clusteringFormService) {
+    public ClusterQuestionController(ClusteringQuestionService clusteringQuestionService, ObjectMapper mapper, ClusteringFormService clusteringFormService, ClusteredFormRepository clusteredFormRepository) {
         this.clusteringQuestionService = clusteringQuestionService;
         this.clusteringFormService = clusteringFormService;
         this.mapper = mapper;
+        this.clusteredFormRepository = clusteredFormRepository;
     }
     @GetMapping(value = "/getQuestions", produces ="application/json")
     @ResponseBody
@@ -57,6 +57,11 @@ public class ClusterQuestionController {
         }
         if (toInsert.size() != 0){
             this.clusteringFormService.submitClusteringForm(new ClusteringForm(submitter,toInsert.toArray(new Answer[toInsert.size()])));
+            if (this.clusteringFormService.getSubmittedAnswers().size() > 100){
+                List<ClusteredForm> clusteredData = this.clusteringQuestionService.clusterQuestions();
+                this.clusteredFormRepository.saveAll(clusteredData);
+            }
+
         }
 
     }
@@ -83,6 +88,22 @@ public class ClusterQuestionController {
             return false;
         }
 
+    }
+    @GetMapping(value = "/populateDataset")
+    @CrossOrigin(origins="http://localhost:3000")
+    public void populateDataset(){
+        this.clusteringQuestionService.generateRandomAnswers();
+    }
+    @GetMapping(value ="/clusterQuestions")
+    @CrossOrigin(origins="http://localhost:3000")
+    public void clusterQuestions(){
+        List<ClusteredForm> clusteredFormList = this.clusteringQuestionService.clusterQuestions();
+        this.clusteredFormRepository.saveAll(clusteredFormList);
+    }
+    @GetMapping(value="/getClusteredForms")
+    @CrossOrigin(origins="http://localhost:3000")
+    public List<ClusteredForm> getClusteredForms(){
+        return this.clusteredFormRepository.findAll();
     }
 
 }

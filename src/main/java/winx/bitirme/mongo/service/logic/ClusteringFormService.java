@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import winx.bitirme.mongo.service.entity.ClusteringForm;
 import winx.bitirme.mongo.service.repository.ClusteringFormRepository;
+
+import java.util.List;
+
 @Component
 public class ClusteringFormService {
     private final ClusteringFormRepository clusteringFormRepository;
@@ -14,5 +17,8 @@ public class ClusteringFormService {
 
     public void submitClusteringForm(ClusteringForm toSubmit){
         this.clusteringFormRepository.save(toSubmit);
+    }
+    public List<ClusteringForm> getSubmittedAnswers(){
+        return this.clusteringFormRepository.findAll();
     }
 }

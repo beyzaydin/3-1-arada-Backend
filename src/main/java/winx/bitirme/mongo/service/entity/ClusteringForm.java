@@ -1,5 +1,6 @@
 package winx.bitirme.mongo.service.entity;
 
+import org.apache.commons.math3.ml.clustering.Clusterable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import winx.bitirme.auth.service.entity.User;
@@ -7,7 +8,7 @@ import winx.bitirme.auth.service.entity.User;
 import java.util.Arrays;
 import java.util.Objects;
 @Document
-public class ClusteringForm {
+public class ClusteringForm implements Clusterable {
     @Id
     private int id;
     private User submitter;
@@ -55,6 +56,16 @@ public class ClusteringForm {
     public int hashCode() {
         int result = Objects.hash(submitter);
         result = 31 * result + Arrays.hashCode(answers);
+        return result;
+    }
+
+    @Override
+    public double[] getPoint() {
+        Answer[] answersSubmitted = this.getAnswers();
+        double[] result = new double[answersSubmitted.length];
+        for (int i = 0; i < answersSubmitted.length; i++){
+            result[i] = answersSubmitted[i].clusteringQuestion.enumerateAnswer(answersSubmitted[i].getAnswer());
+        }
         return result;
     }
 }
