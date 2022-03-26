@@ -59,6 +59,9 @@ public class ProfileController {
     @PostMapping("/profile-pic")
     public ResponseEntity uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        ProfileImageEntity profileImage = profileImageRepository.findByEmail(email);
+        if(profileImage != null)
+            return updateImage(file);
         profileImageRepository.save(
                 new ProfileImageEntity().setEmail(email)
                         .setType(file.getContentType())
@@ -88,7 +91,8 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/profile-pic")
+    @GetMapping(value = "/profile-pic",
+    produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage() throws IOException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ProfileImageEntity profileImage = profileImageRepository.findByEmail(email);
