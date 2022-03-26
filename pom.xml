@@ -12,7 +12,7 @@
 	<artifactId>bitirmeProjesi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bitirmeProjesi</name>
-	<description>Bitirme Projesi Backend </description>
+	<description>Bitirme Projesi Backend</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
