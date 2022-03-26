@@ -10,9 +10,19 @@
 			"item": [
 				{
 					"name": "save",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
-						"header": [],
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MSIsImlhdCI6MTY0Mzk5MDgyNCwiZXhwIjoxNjQ0MDc3MjI0fQ.dJQfTYE2UAB5sJOKbjvRoWWdVZLDLf1PVcAhDvSV_8hPS6uDBUGkPibjpPXhWAT-AK4f6c2TZEc4J5H2Vn1aJw",
+								"type": "default",
+								"disabled": true
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"name\": \"beyza\"\r\n}",
@@ -23,14 +33,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/create",
+							"raw": "http://localhost:9901/get/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "9901",
 							"path": [
-								"create"
+								"get",
+								"1"
 							]
 						}
 					},
@@ -108,7 +119,13 @@
 					"name": "getList",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Winx eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0OEBnbWFpbC5jb20iLCJpYXQiOjE2NDM3MzgxNzksImV4cCI6MTY0MzgyNDU3OX0.oePz5pcVGWlZhY2yo5n3YwjdRMJEuGaamAPk7MX9X37k4kR_ptdrBmn-45ELF3CYQFeoLyf24dHCqPgkZDOaXQ",
+								"type": "default"
+							}
+						],
 						"url": {
 							"raw": "http://localhost:8080/getList",
 							"protocol": "http",
@@ -154,10 +171,17 @@
 					"name": "signIn",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "winx",
+								"value": "1",
+								"type": "default",
+								"disabled": true
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"test2\",\r\n    \"password\": \"12345678\"\r\n}",
+							"raw": "{\r\n    \"username\": \"test1\",\r\n    \"password\": \"12345678\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -172,8 +196,7 @@
 							],
 							"port": "8080",
 							"path": [
-								"api",
-								"auth",
+								"user",
 								"signin"
 							]
 						}
@@ -187,7 +210,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"ROLE_ADMIN\"\r\n}",
+							"raw": "{\r\n    \"name\": \"ROLE_USER\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -202,8 +225,7 @@
 							],
 							"port": "8080",
 							"path": [
-								"api",
-								"auth",
+								"user",
 								"role"
 							]
 						}
@@ -217,7 +239,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"test8\",\r\n    \"password\": \"12345678\",\r\n    \"email\": \"test8@gmail.com\",\r\n    \"role\":[\"mod\",\"user\"],\r\n    \"name\": \"test\",\r\n    \"surname\": \"test\",\r\n    \"birthDate\": \"29-01-2022\",\r\n    \"gender\": \"FEMALE\"\r\n\r\n}",
+							"raw": "{\r\n    \"password\": \"12345678\",\r\n    \"email\": \"test4@gmail.com\",\r\n    \"name\": \"test\",\r\n    \"surname\": \"test\",\r\n    \"birthDate\": \"29-01-2022\",\r\n    \"gender\": \"FEMALE\",\r\n    \"username\":\"test4\",\r\n    \"sign\": \"true\"\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -232,15 +254,107 @@
 							],
 							"port": "8080",
 							"path": [
-								"api",
-								"auth",
+								"user",
 								"signup"
 							]
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "test genel",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MSIsImlhdCI6MTY0Mzk4NzI3MCwiZXhwIjoxNjQ0MDczNjcwfQ.5vnhxUYLSSPCvws42c_alH6rVOUk82G-TFB8ZuCarRxDjP6uCh1RLpaDOR8TQtS1d3TMJ74F6ntsQS7MXWUKIw",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/test/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"test",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "profil",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MSIsImlhdCI6MTY0NjI0NjcwMCwiZXhwIjoxNjQ2MzMzMTAwfQ.pWtmYksHGN6sgJg-sx1hcM8nXnQGbes2vV1vbaKXPXfa8vrQjEykXks9JOJKJ5mXV3yFClq2rp64Edf7TfZh2A",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			]
+		},
+		{
+			"name": "Sleep Deneme",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MSIsImlhdCI6MTY0NTM3ODMyMiwiZXhwIjoxNjQ1NDY0NzIyfQ.lwocS5BXSi7lzUrAeSECLevf3LfcGuSYCJT4CLr5nyjtSg0j_0E3AAPpzoAOiRjfVBT-yhI6IW8UnqDyn3uuhA",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/sleep/deneme",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"sleep",
+						"deneme"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
