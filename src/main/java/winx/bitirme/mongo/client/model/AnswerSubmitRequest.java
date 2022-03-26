@@ -1,16 +1,18 @@
 package winx.bitirme.mongo.client.model;
 
-import winx.bitirme.mongo.service.entity.Answer;
+import winx.bitirme.mongo.service.entity.SubmittedAnswer;
+
+import java.util.List;
 
 public class AnswerSubmitRequest {
-    private Answer[] payload;
+    private List<SubmittedAnswer> payload;
     public AnswerSubmitRequest(){
 
     }
-    public Answer[] getPaylaod(){
+    public  List<SubmittedAnswer>getPayload(){
         return this.payload;
     }
-    public void setPayload(Answer[] toSet){
+    public void setPayload(List<SubmittedAnswer> toSet){
         this.payload = toSet;
     }
 }

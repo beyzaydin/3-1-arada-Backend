@@ -64,4 +64,15 @@ public class ClusteringQuestion {
     public void setPotentialAnswer(String[] potentialAnswer) {
         this.potentialAnswer = potentialAnswer;
     }
+    public double enumerateAnswer(String answer){
+        if (this.potentialAnswer == null){
+            return -1;
+        }
+        for (int i = 0; i < this.potentialAnswer.length; i++){
+            if (answer.equals(this.potentialAnswer[i])){
+                return i;
+            }
+        }
+        return -1;
+    }
 }

@@ -2,6 +2,7 @@ package winx.bitirme.mongo.service.logic;
 
 import org.springframework.stereotype.Component;
 import winx.bitirme.mongo.service.entity.Answer;
+import winx.bitirme.mongo.service.entity.ClusteringForm;
 import winx.bitirme.mongo.service.repository.AnswerRepository;
 
 import java.util.List;
