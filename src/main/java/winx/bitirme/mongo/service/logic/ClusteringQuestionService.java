@@ -7,6 +7,7 @@ import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import winx.bitirme.auth.service.entity.EnumGender;
 import winx.bitirme.auth.service.entity.Role;
 import winx.bitirme.auth.service.entity.User;
@@ -16,7 +17,7 @@ import winx.bitirme.mongo.service.repository.ClusteringQuestionRepository;
 
 import java.util.*;
 
-@Component
+@Service
 public class ClusteringQuestionService {
     ClusteringQuestionRepository clusteringQuestionRepository;
     UserRepository userRepository;
@@ -88,13 +89,8 @@ public class ClusteringQuestionService {
         this.userRepository = userRepository;
         this.clusteringFormService = clusteringFormService;
     }
-    public ClusteringQuestion[] getAllQuestions(){
-        List<ClusteringQuestion> query =this.clusteringQuestionRepository.findAll();
-        ClusteringQuestion[] result = new ClusteringQuestion[query.size()];
-        for (int i = 0; i < query.size(); i++){
-            result[i] = query.get(i);
-        }
-        return result;
+    public List<ClusteringQuestion> getAllQuestions(){
+        return this.clusteringQuestionRepository.findAll();
     }
     public boolean deleteQuestion(String questionBody){
         Optional<ClusteringQuestion> question = this.clusteringQuestionRepository.findById(questionBody);
@@ -108,15 +104,11 @@ public class ClusteringQuestionService {
         this.clusteringQuestionRepository.save(toSave);
     }
     public boolean questionExists(String questionBody){
-        return this.clusteringQuestionRepository.findById(questionBody).isPresent();
+        return this.clusteringQuestionRepository.existsById(questionBody);
     }
     public ClusteringQuestion getQuestionIfExists(String questionBody){
         Optional<ClusteringQuestion> optionalClusteringQuestion = this.clusteringQuestionRepository.findById(questionBody);
-        ClusteringQuestion result = optionalClusteringQuestion.isPresent() ? optionalClusteringQuestion.get() : null;
-        return result;
-    }
-    public User findUserByEmailIfExists(String email){
-        return this.userRepository.findByEmail(email);
+        return optionalClusteringQuestion.orElse(null);
     }
     public String generateRandomString(){
         String allowedChars="ABCDEFGHIJKLMOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
@@ -142,19 +134,19 @@ public class ClusteringQuestionService {
     }
     public void generateRandomAnswers(){
         Random answerPicker = new Random();
-        ClusteringQuestion[] questions = this.getAllQuestions();
+        List<ClusteringQuestion> questions = this.getAllQuestions();
         int questionCount = (int)(Math.random()* 1000);
         ClusteringForm[] forms = new ClusteringForm[questionCount];
-        Answer[] answer;
+        List<Answer> answer;
         int randomAnswer;
         ClusteringQuestion iterate;
         User randomUser;
         for (int i = 0; i < questionCount; i++){
-            answer = new Answer[questions.length];
-            for (int y=0; y < questions.length; y++){
-                iterate = questions[y];
+            answer = new ArrayList<>();
+            for (ClusteringQuestion question : questions) {
+                iterate = question;
                 randomAnswer = answerPicker.nextInt(iterate.getPotentialAnswer().length);
-                answer[y] = new Answer(questions[y],questions[y].getPotentialAnswer()[randomAnswer]);
+                answer.add(new Answer(question, question.getPotentialAnswer()[randomAnswer]));
             }
             randomUser = this.generateNewUser();
             forms[i] = new ClusteringForm(randomUser,answer);
@@ -170,7 +162,7 @@ public class ClusteringQuestionService {
         int group = 1;
         List<CentroidCluster<ClusteringForm>> result = clusterer.cluster(toCluster);
         List<ClusteringForm> eachGroup;
-        for (CentroidCluster cluster : result){
+        for (CentroidCluster<ClusteringForm> cluster : result){
             eachGroup = cluster.getPoints();
             for (ClusteringForm form :eachGroup){
                 clusteredForms.add(new ClusteredForm(group,form.getId(),form.getPoint()));

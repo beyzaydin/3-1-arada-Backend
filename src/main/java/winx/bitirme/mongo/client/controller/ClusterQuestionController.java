@@ -3,9 +3,11 @@ package winx.bitirme.mongo.client.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import winx.bitirme.auth.service.entity.User;
+import winx.bitirme.auth.service.repository.UserRepository;
 import winx.bitirme.mongo.client.model.AddQuestionRequest;
 import winx.bitirme.mongo.client.model.AnswerSubmitRequest;
 import winx.bitirme.mongo.client.model.DeleteQuestionRequest;
@@ -22,30 +24,32 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/question")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ClusterQuestionController {
     final ClusteringQuestionService clusteringQuestionService;
     final ClusteringFormService clusteringFormService;
     final ClusteredFormRepository clusteredFormRepository;
+    final UserRepository userRepository;
     final ObjectMapper mapper;
     @Autowired
-    public ClusterQuestionController(ClusteringQuestionService clusteringQuestionService, ObjectMapper mapper, ClusteringFormService clusteringFormService, ClusteredFormRepository clusteredFormRepository) {
+    public ClusterQuestionController(ClusteringQuestionService clusteringQuestionService, ObjectMapper mapper, ClusteringFormService clusteringFormService, ClusteredFormRepository clusteredFormRepository, UserRepository userRepository) {
         this.clusteringQuestionService = clusteringQuestionService;
         this.clusteringFormService = clusteringFormService;
         this.mapper = mapper;
         this.clusteredFormRepository = clusteredFormRepository;
+        this.userRepository = userRepository;
     }
     @GetMapping(value = "/getQuestions", produces ="application/json")
     @ResponseBody
-    @CrossOrigin(origins = "http://localhost:3000")
+
     public QuestionResponse getQuestions() {
         return new QuestionResponse(this.clusteringQuestionService.getAllQuestions());
     }
     @PostMapping(value = "/submitAnswers",consumes="application/json")
-    @CrossOrigin(origins = "http://localhost:3000")
     public void submitAnswers(@RequestBody AnswerSubmitRequest payload){
+        User submitter = this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         ClusteringQuestion iterate;
         ArrayList<Answer> toInsert = new ArrayList<>();
-        User submitter = this.clusteringQuestionService.findUserByEmailIfExists(payload.getUser().getEmail());
         if (submitter == null){
             return;
         }
@@ -56,7 +60,7 @@ public class ClusterQuestionController {
             }
         }
         if (toInsert.size() != 0){
-            this.clusteringFormService.submitClusteringForm(new ClusteringForm(submitter,toInsert.toArray(new Answer[toInsert.size()])));
+            this.clusteringFormService.submitClusteringForm(new ClusteringForm(submitter,toInsert));
             if (this.clusteringFormService.getSubmittedAnswers().size() > 100){
                 List<ClusteredForm> clusteredData = this.clusteringQuestionService.clusterQuestions();
                 this.clusteredFormRepository.saveAll(clusteredData);
@@ -66,19 +70,11 @@ public class ClusterQuestionController {
 
     }
     @PostMapping(value ="/deleteQuestion", consumes="application/json", produces="application/json")
-    @CrossOrigin(origins = "http://localhost:3000")
     public boolean deleteQuestion(@RequestBody DeleteQuestionRequest toRemove){
-        if (this.clusteringQuestionService.questionExists(toRemove.getQuestionBody())){
-            this.clusteringQuestionService.deleteQuestion(toRemove.getQuestionBody());
-            return true;
-        }
-        else {
-            return false;
-        }
+        return this.clusteringQuestionService.deleteQuestion(toRemove.getQuestionBody());
 
     }
     @PostMapping(value = "/addQuestion", consumes="application/json", produces="application/json")
-    @CrossOrigin(origins = "http://localhost:3000")
     public boolean addQuestion(@RequestBody AddQuestionRequest payload){
         try{
             this.clusteringQuestionService.saveQuestion(payload.constructQuestion());
@@ -90,18 +86,15 @@ public class ClusterQuestionController {
 
     }
     @GetMapping(value = "/populateDataset")
-    @CrossOrigin(origins="http://localhost:3000")
     public void populateDataset(){
         this.clusteringQuestionService.generateRandomAnswers();
     }
     @GetMapping(value ="/clusterQuestions")
-    @CrossOrigin(origins="http://localhost:3000")
     public void clusterQuestions(){
         List<ClusteredForm> clusteredFormList = this.clusteringQuestionService.clusterQuestions();
         this.clusteredFormRepository.saveAll(clusteredFormList);
     }
     @GetMapping(value="/getClusteredForms")
-    @CrossOrigin(origins="http://localhost:3000")
     public List<ClusteredForm> getClusteredForms(){
         return this.clusteredFormRepository.findAll();
     }
