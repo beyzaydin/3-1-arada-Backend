@@ -3,11 +3,9 @@ package winx.bitirme.auth.client.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import winx.bitirme.auth.client.model.Profile;
+import winx.bitirme.auth.service.entity.User;
 import winx.bitirme.auth.service.repository.UserRepository;
 
 @RestController
@@ -28,5 +26,23 @@ public class ProfileController {
         profile.setSleepProgress(-1);
         profile.setMeditationProgress(-1);
         return profile;
+    }
+
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Profile updateProfile(@RequestBody Profile profile){
+        Profile prof = new Profile();
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        user.setName(profile.getName());
+        user.setSurname(profile.getSurname());
+        user.setEmail(profile.getEmail());
+        user.setBirthDate(profile.getBirthDate());
+        user.setGender(profile.getGender());
+        user.setRoles(profile.getRoles());
+        user = userRepository.save(user);
+        prof.setUserInfo(user);
+        profile.setSleepProgress(-1);
+        profile.setMeditationProgress(-1);
+        return prof;
     }
 }
