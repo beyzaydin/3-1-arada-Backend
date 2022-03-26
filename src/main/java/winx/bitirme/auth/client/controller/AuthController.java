@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,10 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import winx.bitirme.auth.client.model.JwtResponse;
-import winx.bitirme.auth.client.model.LoginRequest;
-import winx.bitirme.auth.client.model.MessageResponse;
-import winx.bitirme.auth.client.model.SignupRequest;
+import winx.bitirme.auth.client.model.*;
 import winx.bitirme.auth.service.entity.ERole;
 import winx.bitirme.auth.service.entity.Role;
 import winx.bitirme.auth.service.entity.User;
@@ -65,7 +63,23 @@ public class AuthController {
         this.encoder = encoder;
         this.jwtUtils = jwtUtils;
         this.sequenceGeneratorService = sequenceGeneratorService;
+    }
 
+    @PostMapping(value = "/updatePass",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity updatePassword(@RequestBody PasswordModel passwordModel){
+        User user = userRepository.findByUsername(passwordModel.getEmail());
+        user.setPassword(encoder.encode(passwordModel.getPassword()));
+        user = userRepository.save(user);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Bearer " + Jwts.builder()
+                        .setSubject(user.getUsername())
+                        .setIssuedAt(new Date())
+                        .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                        .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                        .compact());
     }
 
     @PostMapping("/signin")
