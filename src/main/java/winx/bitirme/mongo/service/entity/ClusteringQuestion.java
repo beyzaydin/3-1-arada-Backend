@@ -3,11 +3,10 @@ package winx.bitirme.mongo.service.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import winx.bitirme.mongo.service.repository.ClusteringQuestionRepository;
 
 @Document
 public class ClusteringQuestion {
-
-
     @Id
     private String questionBody;
     private QuestionType answerType;
@@ -15,7 +14,6 @@ public class ClusteringQuestion {
 
     public ClusteringQuestion() {
     }
-
     public ClusteringQuestion(String questionBody, QuestionType answerType, String[] potentialAnswers) {
         this.questionBody = questionBody;
         this.answerType = answerType;
