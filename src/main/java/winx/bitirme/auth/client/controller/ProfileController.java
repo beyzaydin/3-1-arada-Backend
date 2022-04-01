@@ -68,8 +68,8 @@ public class ProfileController {
             prof.setSleepProgress(profile.getSleepProgress());
         user = userRepository.save(user);
         prof.setUserInfo(user);
-        profile.setSleepProgress(-1);
-        profile.setMeditationProgress(-1);
+        //profile.setSleepProgress(-1);
+        //profile.setMeditationProgress(-1);
         return prof;
     }
 
@@ -93,7 +93,7 @@ public class ProfileController {
         if (profileImage == null)
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body("This user has no profile picture. Therefore updating is not an option");
-        profileImageRepository.save(profileImage.setProfilePicture(file.getBytes()));
+        profileImageRepository.save( profileImage.setProfilePicture(file.getBytes()));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
