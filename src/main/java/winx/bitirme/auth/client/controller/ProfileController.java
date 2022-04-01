@@ -116,26 +116,26 @@ public class ProfileController {
     @PostMapping(value = "/todo",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity saveToDoModel(@RequestBody ToDoModel model){
+    public ResponseEntity saveToDoModel(@RequestBody ToDoModel model) {
         return ResponseEntity.status(200).body(toDoService.saveToDoModel(model));
     }
 
     @PutMapping(value = "/todo",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity updateTask(@RequestBody ToDoModel model){
+    public ResponseEntity updateTask(@RequestBody ToDoModel model) {
         model.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         ToDoModel fromDb = toDoService.updateTask(model);
-        if(fromDb == null)
+        if (fromDb == null)
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
                     .body("Model is not found!");
-            return ResponseEntity.ok(fromDb);
+        return ResponseEntity.ok(fromDb);
     }
 
     @GetMapping(value = "/todo",
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getToDoListByUsername(){
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getToDoListByUsername() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(toDoService.getToDoListByUsername(username));
     }
