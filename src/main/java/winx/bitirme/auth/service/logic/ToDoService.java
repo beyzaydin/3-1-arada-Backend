@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import winx.bitirme.auth.client.model.ToDoModel;
+import winx.bitirme.auth.client.model.ToDoReturnModel;
 import winx.bitirme.auth.service.converter.ToDoMapper;
 import winx.bitirme.auth.service.entity.ToDoEntity;
 import winx.bitirme.auth.service.repository.ToDoRepository;
@@ -34,8 +35,8 @@ public class ToDoService {
         return mapper.convertToModel(repository.findByUsernameAndTask(username, taskName));
     }
 
-    public List<ToDoModel> getToDoListByUsername(String username){
-        return mapper.convertToModelList(repository.findAllByUsername(username));
+    public ToDoReturnModel getToDoListByUsername(String username){
+        return new ToDoReturnModel(mapper.convertToModelList(repository.findAllByUsername(username)));
     }
 
     public void deleteTask(String taskName, String username){
