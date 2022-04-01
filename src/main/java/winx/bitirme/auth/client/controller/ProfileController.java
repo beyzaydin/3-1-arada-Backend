@@ -66,6 +66,8 @@ public class ProfileController {
             prof.setMeditationProgress(profile.getMeditationProgress());
         if (profile.getSleepProgress() != null)
             prof.setSleepProgress(profile.getSleepProgress());
+        if (profileImageRepository.existsByEmail(user.getEmail()))
+            prof.setProfilePicture(profileImageRepository.findByEmail(user.getEmail()).getProfilePicture());
         user = userRepository.save(user);
         prof.setUserInfo(user);
         //profile.setSleepProgress(-1);
