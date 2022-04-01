@@ -124,17 +124,19 @@ public class ProfileController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateTask(@RequestBody ToDoModel model){
+        model.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         ToDoModel fromDb = toDoService.updateTask(model);
         if(fromDb == null)
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
                     .body("Model is not found!");
-
             return ResponseEntity.ok(fromDb);
     }
 
-    @GetMapping()
-    public ResponseEntity getToDoListByUsername(@PathParam("username") String username){
+    @GetMapping(value = "/todo",
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getToDoListByUsername(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(toDoService.getToDoListByUsername(username));
     }
 }

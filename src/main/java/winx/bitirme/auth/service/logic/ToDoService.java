@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import winx.bitirme.auth.client.model.ToDoModel;
 import winx.bitirme.auth.service.converter.ToDoMapper;
+import winx.bitirme.auth.service.entity.ToDoEntity;
 import winx.bitirme.auth.service.repository.ToDoRepository;
 
 import java.util.List;
@@ -22,6 +23,9 @@ public class ToDoService {
 
 
     public ToDoModel saveToDoModel(ToDoModel model){
+        ToDoEntity entity = repository.findByUsernameAndTask(model.getUsername(), model.getTask());
+        if(entity != null)
+            return mapper.convertToModel(entity);
         model.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         return mapper.convertToModel(repository.save(mapper.convertToEntity(model)));
     }
