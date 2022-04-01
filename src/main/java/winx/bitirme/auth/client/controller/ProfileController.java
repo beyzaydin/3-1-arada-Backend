@@ -8,11 +8,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import winx.bitirme.auth.client.model.Profile;
+import winx.bitirme.auth.client.model.ToDoModel;
 import winx.bitirme.auth.service.entity.ProfileImageEntity;
 import winx.bitirme.auth.service.entity.User;
+import winx.bitirme.auth.service.logic.ToDoService;
 import winx.bitirme.auth.service.repository.ProfileImageRepository;
 import winx.bitirme.auth.service.repository.UserRepository;
 
+import javax.websocket.server.PathParam;
 import java.io.IOException;
 
 @RestController
@@ -21,11 +24,13 @@ import java.io.IOException;
 public class ProfileController {
     private final UserRepository userRepository;
     private final ProfileImageRepository profileImageRepository;
+    private final ToDoService toDoService;
 
     @Autowired
-    public ProfileController(UserRepository userRepository, ProfileImageRepository profileImageRepository) {
+    public ProfileController(UserRepository userRepository, ProfileImageRepository profileImageRepository, ToDoService toDoService) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
+        this.toDoService = toDoService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -108,4 +113,28 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).body(profileImage.getProfilePicture());
     }
 
+    @PostMapping(value = "/todo",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveToDoModel(@RequestBody ToDoModel model){
+        return ResponseEntity.status(200).body(toDoService.saveToDoModel(model));
+    }
+
+    @PutMapping(value = "/todo",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity updateTask(@RequestBody ToDoModel model){
+        ToDoModel fromDb = toDoService.updateTask(model);
+        if(fromDb == null)
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .body("Model is not found!");
+
+            return ResponseEntity.ok(fromDb);
+    }
+
+    @GetMapping()
+    public ResponseEntity getToDoListByUsername(@PathParam("username") String username){
+        return ResponseEntity.ok(toDoService.getToDoListByUsername(username));
+    }
 }
