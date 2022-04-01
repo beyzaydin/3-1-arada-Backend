@@ -6,7 +6,7 @@ import winx.bitirme.auth.service.entity.ToDoEntity;
 
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface ToDoMapper {
     public ToDoEntity convertToEntity(ToDoModel model);
     public ToDoModel convertToModel(ToDoEntity model);
