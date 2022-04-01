@@ -20,7 +20,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/profile")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 public class ProfileController {
     private final UserRepository userRepository;
     private final ProfileImageRepository profileImageRepository;
@@ -36,13 +36,16 @@ public class ProfileController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Profile profile() {
         Profile profile = new Profile();
-        profile.setUserInfo(userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()));
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        profile.setUserInfo(userRepository.findByEmail(username));
+        if (profileImageRepository.existsByEmail(username))
+            profile.setProfilePicture(profileImageRepository.findByEmail(username).getProfilePicture());
         profile.setSleepProgress(-1);
         profile.setMeditationProgress(-1);
         return profile;
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE},
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public Profile updateProfile(@RequestBody Profile profile) {
         Profile prof = new Profile();
@@ -59,9 +62,9 @@ public class ProfileController {
             user.setGender(profile.getGender());
         if (!profile.getRoles().isEmpty())
             user.setRoles(profile.getRoles());
-        if(profile.getMeditationProgress() != null)
+        if (profile.getMeditationProgress() != null)
             prof.setMeditationProgress(profile.getMeditationProgress());
-        if(profile.getSleepProgress() != null)
+        if (profile.getSleepProgress() != null)
             prof.setSleepProgress(profile.getSleepProgress());
         user = userRepository.save(user);
         prof.setUserInfo(user);

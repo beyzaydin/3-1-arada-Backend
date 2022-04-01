@@ -7,4 +7,5 @@ import winx.bitirme.auth.service.entity.ProfileImageEntity;
 @Repository
 public interface ProfileImageRepository extends MongoRepository<ProfileImageEntity, String> {
     ProfileImageEntity findByEmail(String email);
+    Boolean existsByEmail(String email);
 }

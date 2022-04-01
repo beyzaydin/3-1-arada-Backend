@@ -1,5 +1,6 @@
 package winx.bitirme.auth.service.entity;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
@@ -7,6 +8,7 @@ import javax.persistence.Id;
 @Document(collection = "profile-image")
 public class ProfileImageEntity {
     @Id
+    @Indexed(unique=true)
     private String email;
     private byte[] profilePicture;
     private String type;
