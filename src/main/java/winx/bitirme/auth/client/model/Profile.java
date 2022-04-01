@@ -3,7 +3,6 @@ package winx.bitirme.auth.client.model;
 import winx.bitirme.auth.service.entity.EnumGender;
 import winx.bitirme.auth.service.entity.Role;
 import winx.bitirme.auth.service.entity.User;
-import winx.bitirme.auth.service.logic.UserDetailsImpl;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -28,6 +27,8 @@ public class Profile {
 
     private Integer meditationProgress;
 
+    private byte[] profilePicture;
+
     public void setUserInfo(User user) {
         setUsername(user.getUsername());
         setEmail(user.getEmail());
@@ -37,6 +38,7 @@ public class Profile {
         setSurname(user.getSurname());
         setBirthDate(user.getBirthDate());
     }
+
 
     public String getUsername() {
         return username;
@@ -108,5 +110,13 @@ public class Profile {
 
     public void setMeditationProgress(Integer meditationProgress) {
         this.meditationProgress = meditationProgress;
+    }
+
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }
