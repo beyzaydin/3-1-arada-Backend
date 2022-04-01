@@ -13,7 +13,6 @@ import winx.bitirme.auth.service.entity.User;
 import winx.bitirme.auth.service.repository.ProfileImageRepository;
 import winx.bitirme.auth.service.repository.UserRepository;
 
-import java.awt.*;
 import java.io.IOException;
 
 @RestController
@@ -43,12 +42,22 @@ public class ProfileController {
     public Profile updateProfile(@RequestBody Profile profile) {
         Profile prof = new Profile();
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        user.setName(profile.getName());
-        user.setSurname(profile.getSurname());
-        user.setEmail(profile.getEmail());
-        user.setBirthDate(profile.getBirthDate());
-        user.setGender(profile.getGender());
-        user.setRoles(profile.getRoles());
+        if (profile.getName() != null)
+            user.setName(profile.getName());
+        if (profile.getSurname() != null)
+            user.setSurname(profile.getSurname());
+        if (profile.getEmail() != null)
+            user.setEmail(profile.getEmail());
+        if (profile.getBirthDate() != null)
+            user.setBirthDate(profile.getBirthDate());
+        if (profile.getGender() != null)
+            user.setGender(profile.getGender());
+        if (!profile.getRoles().isEmpty())
+            user.setRoles(profile.getRoles());
+        if(profile.getMeditationProgress() != null)
+            prof.setMeditationProgress(profile.getMeditationProgress());
+        if(profile.getSleepProgress() != null)
+            prof.setSleepProgress(profile.getSleepProgress());
         user = userRepository.save(user);
         prof.setUserInfo(user);
         profile.setSleepProgress(-1);
@@ -60,7 +69,7 @@ public class ProfileController {
     public ResponseEntity uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ProfileImageEntity profileImage = profileImageRepository.findByEmail(email);
-        if(profileImage != null)
+        if (profileImage != null)
             return updateImage(file);
         profileImageRepository.save(
                 new ProfileImageEntity().setEmail(email)
@@ -73,10 +82,10 @@ public class ProfileController {
     public ResponseEntity updateImage(@RequestParam("image") MultipartFile file) throws IOException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ProfileImageEntity profileImage = profileImageRepository.findByEmail(email);
-        if(profileImage == null)
+        if (profileImage == null)
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body("This user has no profile picture. Therefore updating is not an option");
-        profileImageRepository.save( profileImage.setProfilePicture(file.getBytes()));
+        profileImageRepository.save(profileImage.setProfilePicture(file.getBytes()));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -84,15 +93,15 @@ public class ProfileController {
     public ResponseEntity deleteImage() throws IOException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ProfileImageEntity profileImage = profileImageRepository.findByEmail(email);
-        if(profileImage == null)
+        if (profileImage == null)
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body("This user has no profile picture. Therefore deleting is not an option");
-        profileImageRepository.delete( profileImage);
+        profileImageRepository.delete(profileImage);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping(value = "/profile-pic",
-    produces = MediaType.IMAGE_JPEG_VALUE)
+            produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage() throws IOException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ProfileImageEntity profileImage = profileImageRepository.findByEmail(email);
