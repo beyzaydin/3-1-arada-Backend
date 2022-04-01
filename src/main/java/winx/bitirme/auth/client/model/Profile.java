@@ -34,7 +34,7 @@ public class Profile {
         setGender(user.getGender());
         setName(user.getName());
         setRoles(user.getRoles());
-        setSurname(user.getName());
+        setSurname(user.getSurname());
         setBirthDate(user.getBirthDate());
     }
 
