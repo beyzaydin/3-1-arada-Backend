@@ -1,25 +1,49 @@
 package winx.bitirme.auth.service.entity;
 
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
 
 @Document(collection = "profile-image")
 public class ProfileImageEntity {
+    @Transient
+    public static final String SEQUENCE_NAME = "profil_image_sequence";
+
     @Id
-    @Indexed(unique=true)
+    private long id;
     private String email;
     private byte[] profilePicture;
     private String type;
 
-    public ProfileImageEntity(String email, byte[] profilePicture, String type) {
+    public ProfileImageEntity(String email,
+                              byte[] profilePicture,
+                              String type) {
+        this.email = email;
+        this.profilePicture = profilePicture;
+        this.type = type;
+    }
+
+    public ProfileImageEntity(long id,
+                              String email,
+                              byte[] profilePicture,
+                              String type) {
+        this.id = id;
         this.email = email;
         this.profilePicture = profilePicture;
         this.type = type;
     }
 
     public ProfileImageEntity() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public ProfileImageEntity setId(long id) {
+        this.id = id;
+        return this;
     }
 
     public String getEmail() {
@@ -50,6 +74,6 @@ public class ProfileImageEntity {
     }
 
     public ProfileImageEntity createProfileImageEntity() {
-        return new ProfileImageEntity(email, profilePicture, type);
+        return new ProfileImageEntity(id, email, profilePicture, type);
     }
 }
