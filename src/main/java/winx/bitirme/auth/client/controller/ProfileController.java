@@ -14,8 +14,8 @@ import winx.bitirme.auth.service.entity.User;
 import winx.bitirme.auth.service.logic.ToDoService;
 import winx.bitirme.auth.service.repository.ProfileImageRepository;
 import winx.bitirme.auth.service.repository.UserRepository;
+import winx.bitirme.mongo.service.logic.SequenceGeneratorService;
 
-import javax.websocket.server.PathParam;
 import java.io.IOException;
 
 @RestController
@@ -25,12 +25,16 @@ public class ProfileController {
     private final UserRepository userRepository;
     private final ProfileImageRepository profileImageRepository;
     private final ToDoService toDoService;
+    private final SequenceGeneratorService sequenceGeneratorService;
 
     @Autowired
-    public ProfileController(UserRepository userRepository, ProfileImageRepository profileImageRepository, ToDoService toDoService) {
+    public ProfileController(UserRepository userRepository,
+                             ProfileImageRepository profileImageRepository,
+                             ToDoService toDoService, SequenceGeneratorService sequenceGeneratorService) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
         this.toDoService = toDoService;
+        this.sequenceGeneratorService = sequenceGeneratorService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -70,8 +74,6 @@ public class ProfileController {
             prof.setProfilePicture(profileImageRepository.findByEmail(user.getEmail()).getProfilePicture());
         user = userRepository.save(user);
         prof.setUserInfo(user);
-        //profile.setSleepProgress(-1);
-        //profile.setMeditationProgress(-1);
         return prof;
     }
 
@@ -82,7 +84,9 @@ public class ProfileController {
         if (profileImage != null)
             return updateImage(file);
         profileImageRepository.save(
-                new ProfileImageEntity().setEmail(email)
+                new ProfileImageEntity()
+                        .setId(sequenceGeneratorService.generateSequence(ProfileImageEntity.SEQUENCE_NAME))
+                        .setEmail(email)
                         .setType(file.getContentType())
                         .setProfilePicture(file.getBytes()));
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -95,7 +99,7 @@ public class ProfileController {
         if (profileImage == null)
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body("This user has no profile picture. Therefore updating is not an option");
-        profileImageRepository.save( profileImage.setProfilePicture(file.getBytes()));
+        profileImageRepository.save(profileImage.setProfilePicture(file.getBytes()));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
