@@ -70,7 +70,13 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updatePassword(@RequestBody PasswordModel passwordModel){
         User user = userRepository.findByUsername(passwordModel.getEmail());
-        user.setPassword(encoder.encode(passwordModel.getPassword()));
+        if(user == null)
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                    .body("User not found");
+        if(!encoder.matches(passwordModel.getOldPassword(), user.getPassword()))
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                    .body("Password is not correct");
+        user.setPassword(encoder.encode(passwordModel.getNewPassword()));
         user = userRepository.save(user);
         return ResponseEntity
                 .status(HttpStatus.OK)
