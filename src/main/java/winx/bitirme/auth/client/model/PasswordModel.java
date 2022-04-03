@@ -2,7 +2,8 @@ package winx.bitirme.auth.client.model;
 
 public class PasswordModel {
     private String email;
-    private String password;
+    private String newPassword;
+    private String oldPassword;
 
     public String getEmail() {
         return email;
@@ -12,11 +13,19 @@ public class PasswordModel {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getNewPassword() {
+        return newPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }
