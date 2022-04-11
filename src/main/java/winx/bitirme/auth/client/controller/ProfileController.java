@@ -49,7 +49,7 @@ public class ProfileController {
         return profile;
     }
 
-    @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE},
+    @PutMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE},
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public Profile updateProfile(@RequestBody Profile profile) {
         Profile prof = new Profile();
