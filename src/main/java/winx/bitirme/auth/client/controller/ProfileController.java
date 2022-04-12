@@ -126,6 +126,7 @@ public class ProfileController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity saveToDoModel(@RequestBody ToDoModel model) {
+        model.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         return ResponseEntity.status(200).body(toDoService.saveToDoModel(model));
     }
 
