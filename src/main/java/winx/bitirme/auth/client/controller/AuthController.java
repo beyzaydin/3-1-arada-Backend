@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import winx.bitirme.achievement.service.logic.UserAchievementService;
 import winx.bitirme.auth.client.model.*;
 import winx.bitirme.auth.service.constant.EmailTemplate;
 import winx.bitirme.auth.service.entity.ERole;
@@ -33,7 +34,6 @@ import winx.bitirme.mongo.service.logic.SequenceGeneratorService;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,6 +54,7 @@ public class AuthController {
     private final PasswordChangeTokenRepository passwordChangeTokenRepository;
     @Value("$ {bezkoder.app.jwtSecret} ")
     private String jwtSecret;
+    private final UserAchievementService userAchievementService;
 
     @Autowired
     public AuthController(MongoOperations mongo,
@@ -64,7 +65,8 @@ public class AuthController {
                           JwtUtils jwtUtils,
                           SequenceGeneratorService sequenceGeneratorService,
                           EmailService emailService,
-                          PasswordChangeTokenRepository passwordChangeTokenRepository) {
+                          PasswordChangeTokenRepository passwordChangeTokenRepository,
+                          UserAchievementService userAchievementService) {
         this.mongo = mongo;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
@@ -74,6 +76,7 @@ public class AuthController {
         this.sequenceGeneratorService = sequenceGeneratorService;
         this.emailService = emailService;
         this.passwordChangeTokenRepository = passwordChangeTokenRepository;
+        this.userAchievementService = userAchievementService;
     }
 
     @PostMapping(value = "/updatePass",
@@ -113,6 +116,8 @@ public class AuthController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
+        userAchievementService.dailyLoginAchieved(loginRequest.getUsername());
+
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
@@ -137,7 +142,6 @@ public class AuthController {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
 
-        // Create new user's account
         User user = new User(signUpRequest.getEmail(),
                 signUpRequest.getName(),
                 signUpRequest.getSurname(),
@@ -191,6 +195,8 @@ public class AuthController {
         long id = sequenceGeneratorService.generateSequence(User.SEQUENCE_NAME);
         user.setId(id);
         userRepository.save(user);
+
+        userAchievementService.saveInitialEntities(user.getEmail());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
