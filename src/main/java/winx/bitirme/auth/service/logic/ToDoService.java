@@ -52,6 +52,7 @@ public class ToDoService {
         if (getToDoModel(model.getTask(), model.getUsername()) == null
             && entity != null )
             return null;
+        model.setId(entity.getId());
         return mapper.convertToModel(repository.save(mapper.convertToEntity(model)));
     }
 }
