@@ -1,9 +1,18 @@
 package winx.bitirme.auth.client.model;
 
 public class ToDoModel {
+    private Long id;
     private String task;
     private boolean isDone;
     private String username;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTask() {
         return task;

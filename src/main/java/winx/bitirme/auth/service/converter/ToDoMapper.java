@@ -9,7 +9,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ToDoMapper {
     public ToDoEntity convertToEntity(ToDoModel model);
+
     public ToDoModel convertToModel(ToDoEntity model);
+
     public List<ToDoEntity> convertToEntityList(List<ToDoModel> model);
+
     public List<ToDoModel> convertToModelList(List<ToDoEntity> model);
 }
