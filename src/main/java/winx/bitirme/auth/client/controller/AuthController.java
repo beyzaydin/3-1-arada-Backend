@@ -219,7 +219,7 @@ public class AuthController {
         passwordChangeTokenRepository.save(entity);
 
         String mail = new EmailTemplate().getTemplate();
-        String url = "http://localhost:3000/register?forgot="+entity.getToken();
+        String url = "http://localhost:3000/resetPassword/token="+entity.getToken();
         mail = String.format(mail, url);
 
         emailService.sendSimpleEmail(email,

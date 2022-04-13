@@ -23,7 +23,7 @@ public class EmailService {
         messageHelper.setTo(toEmail);
         messageHelper.setSubject(subject);
         messageHelper.setText(body, true);
-        File img = new File("C:\\Users\\baydi\\IdeaProjects\\3-1-arada-Backend\\src\\main\\java\\resources\\images\\logo_green.png");
+        File img = new File("src\\main\\java\\resources\\images\\logo_green.png");
         messageHelper.addInline("logo", img);
         mailSender.send(mimeMessage);
         System.out.println("Mail Send...");
