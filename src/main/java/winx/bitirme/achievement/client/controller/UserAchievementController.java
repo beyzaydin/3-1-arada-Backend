@@ -25,8 +25,7 @@ public class UserAchievementController {
         return service.update(model);
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getList() {
         return service.getListByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }

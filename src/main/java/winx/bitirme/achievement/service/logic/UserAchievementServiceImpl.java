@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import winx.bitirme.achievement.client.model.EnumAchievementType;
 import winx.bitirme.achievement.client.model.UserAchievementModel;
+import winx.bitirme.achievement.client.model.UserAchievementReturnModel;
 import winx.bitirme.achievement.service.converter.UserAchievementMapper;
 import winx.bitirme.achievement.service.entity.UserAchievementEntity;
 import winx.bitirme.achievement.service.repository.UserAchievementRepository;
@@ -57,7 +58,9 @@ public class UserAchievementServiceImpl implements UserAchievementService {
 
     @Override
     public ResponseEntity getListByEmail(String email) {
-        return ResponseEntity.ok(mapper.convertToModelList(repository.findAllByEmail(email)));
+        UserAchievementReturnModel model = new UserAchievementReturnModel();
+        model.setModelList(mapper.convertToModelList(repository.findAllByEmail(email)));
+        return ResponseEntity.ok(model);
     }
 
     @Override
@@ -262,7 +265,7 @@ public class UserAchievementServiceImpl implements UserAchievementService {
                         el.setCompleted(true);
                         el.setPercentage(1.0);
                     } else {
-                        double percentage = (double)el.getOccurred() / (double)el.getGoal();
+                        double percentage = (double) el.getOccurred() / (double) el.getGoal();
                         el.setPercentage(percentage);
                     }
                     repository.save(el);
