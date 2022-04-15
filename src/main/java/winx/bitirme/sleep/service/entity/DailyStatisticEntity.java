@@ -1,19 +1,16 @@
 package winx.bitirme.sleep.service.entity;
 
-import com.sun.istack.NotNull;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.security.core.context.SecurityContextHolder;
-import winx.bitirme.auth.service.logic.UserDetailsImpl;
 
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
-@Document("DailyStatistic")
+@Document("daily-sleep-statistic")
 public class DailyStatisticEntity {
     @Transient
     public static final String SEQUENCE_NAME = "daily_statistic_sequence";
@@ -21,28 +18,34 @@ public class DailyStatisticEntity {
     @Id
     private Long id;
 
-    @NotNull
-    @Field(name = "user")
-    @DBRef
-    private UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    //ben koyuyorum
+    private String email;
 
+    //mobilden geliyor setliyorum
+    private List<Date> sleepTimeList;
+    //normalize edip koyuyorum
+    private List<Double> sleepQualityList;
+    //gelen ilk datayla bunu setliyorum
     @Field("startTime")
-    private OffsetDateTime sleepStartTime;
-
+    private Date sleepStartTime;
+    //gelen datanın son verisini alıyorum
     @Field("endTime")
-    private OffsetDateTime sleepEndTime;
-
-    @Field("sleepQuality")
-    private List<Long> sleepQuality;
-
-    @Field("totalSleepTime")
-    private List<Long> totalSleepTime;
-
+    private Date sleepEndTime;
+    //bunu setliyorum
+    @Field("averageSleepQuality")
+    private Double averageSleepQuality;
+    //bunu setliyorum
     @Field("bestSleepAt")
-    private OffsetTime bestSleepAt;
-
+    private Date bestSleepAt;
+    //bunu setliyorum
     @Field("worstSleepAt")
-    private OffsetTime worstSleepAt;
+    private Date worstSleepAt;
+    //mobilden gelecek
+    @Field("totalSleep")
+    private Double totalSleepHours;
+    //Ben setliyorum
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
 
     public Long getId() {
         return id;
@@ -52,59 +55,83 @@ public class DailyStatisticEntity {
         this.id = id;
     }
 
-    public UserDetailsImpl getUser() {
-        return user;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUser(UserDetailsImpl user) {
-        this.user = user;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public OffsetDateTime getSleepStartTime() {
+    public Date getSleepStartTime() {
         return sleepStartTime;
     }
 
-    public void setSleepStartTime(OffsetDateTime sleepStartTime) {
+    public void setSleepStartTime(Date sleepStartTime) {
         this.sleepStartTime = sleepStartTime;
     }
 
-    public OffsetDateTime getSleepEndTime() {
+    public Date getSleepEndTime() {
         return sleepEndTime;
     }
 
-    public void setSleepEndTime(OffsetDateTime sleepEndTime) {
+    public void setSleepEndTime(Date sleepEndTime) {
         this.sleepEndTime = sleepEndTime;
     }
 
-    public List<Long> getSleepQuality() {
-        return sleepQuality;
-    }
-
-    public void setSleepQuality(List<Long> sleepQuality) {
-        this.sleepQuality = sleepQuality;
-    }
-
-    public List<Long> getTotalSleepTime() {
-        return totalSleepTime;
-    }
-
-    public void setTotalSleepTime(List<Long> totalSleepTime) {
-        this.totalSleepTime = totalSleepTime;
-    }
-
-    public OffsetTime getBestSleepAt() {
+    public Date getBestSleepAt() {
         return bestSleepAt;
     }
 
-    public void setBestSleepAt(OffsetTime bestSleepAt) {
+    public void setBestSleepAt(Date bestSleepAt) {
         this.bestSleepAt = bestSleepAt;
     }
 
-    public OffsetTime getWorstSleepAt() {
+    public Date getWorstSleepAt() {
         return worstSleepAt;
     }
 
-    public void setWorstSleepAt(OffsetTime worstSleepAt) {
+    public void setWorstSleepAt(Date worstSleepAt) {
         this.worstSleepAt = worstSleepAt;
+    }
+
+    public Double getAverageSleepQuality() {
+        return averageSleepQuality;
+    }
+
+    public void setAverageSleepQuality(Double averageSleepQuality) {
+        this.averageSleepQuality = averageSleepQuality;
+    }
+
+    public List<Date> getSleepTimeList() {
+        return sleepTimeList;
+    }
+
+    public void setSleepTimeList(List<Date> sleepTimeList) {
+        this.sleepTimeList = sleepTimeList;
+    }
+
+    public List<Double> getSleepQualityList() {
+        return sleepQualityList;
+    }
+
+    public void setSleepQualityList(List<Double> sleepQualityList) {
+        this.sleepQualityList = sleepQualityList;
+    }
+
+    public Double getTotalSleepHours() {
+        return totalSleepHours;
+    }
+
+    public void setTotalSleepHours(Double totalSleepHours) {
+        this.totalSleepHours = totalSleepHours;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }
