@@ -25,6 +25,7 @@ import winx.bitirme.auth.service.entity.PasswordChangeTokenEntity;
 import winx.bitirme.auth.service.entity.Role;
 import winx.bitirme.auth.service.entity.User;
 import winx.bitirme.auth.service.logic.EmailService;
+import winx.bitirme.auth.service.logic.ToDoService;
 import winx.bitirme.auth.service.logic.UserDetailsImpl;
 import winx.bitirme.auth.service.repository.PasswordChangeTokenRepository;
 import winx.bitirme.auth.service.repository.RoleRepository;
@@ -37,7 +38,7 @@ import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RestController
 @RequestMapping("/user")
 public class AuthController {
@@ -66,7 +67,7 @@ public class AuthController {
                           SequenceGeneratorService sequenceGeneratorService,
                           EmailService emailService,
                           PasswordChangeTokenRepository passwordChangeTokenRepository,
-                          UserAchievementService userAchievementService) {
+                          UserAchievementService userAchievementService, ToDoService toDoService) {
         this.mongo = mongo;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
@@ -90,6 +91,26 @@ public class AuthController {
         if (!encoder.matches(passwordModel.getOldPassword(), user.getPassword()))
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
                     .body("Password is not correct");
+        user.setPassword(encoder.encode(passwordModel.getNewPassword()));
+        user = userRepository.save(user);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Bearer " + Jwts.builder()
+                        .setSubject(user.getUsername())
+                        .setIssuedAt(new Date())
+                        .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                        .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                        .compact());
+    }
+
+    @PostMapping(value = "/resetPass",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity updatePasswordForgot(@RequestBody PasswordModel passwordModel) {
+        User user = userRepository.findByUsername(passwordModel.getEmail());
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                    .body("User not found");
         user.setPassword(encoder.encode(passwordModel.getNewPassword()));
         user = userRepository.save(user);
         return ResponseEntity
@@ -216,6 +237,13 @@ public class AuthController {
         entity.setId(sequenceGeneratorService.generateSequence(PasswordChangeTokenEntity.SEQUENCE_NAME));
         entity.setEmail(email);
         entity.setToken(UUID.randomUUID().toString());
+        entity.setExpired(false);
+
+        Calendar cal = Calendar.getInstance(); // creates calendar
+        cal.setTime(new Date());               // sets calendar time/date
+        cal.add(Calendar.HOUR_OF_DAY, 2);      // adds one hour
+
+        entity.setExpireDate(cal.getTime());
         passwordChangeTokenRepository.save(entity);
 
         String mail = new EmailTemplate().getTemplate();
