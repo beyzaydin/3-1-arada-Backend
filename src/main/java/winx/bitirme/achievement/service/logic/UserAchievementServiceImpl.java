@@ -66,7 +66,7 @@ public class UserAchievementServiceImpl implements UserAchievementService {
     @Override
     public void saveInitialEntities(String email) {
         List<UserAchievementEntity> list = repository.findAllByEmail(email);
-        if (list.isEmpty() || list == null) {
+        if (list == null || list.isEmpty()) {
             long id = sequenceGeneratorService.generateSequence(UserAchievementEntity.SEQUENCE_NAME);
             UserAchievementEntity entity = new UserAchievementEntity();
             entity.setId(id);
@@ -112,7 +112,7 @@ public class UserAchievementServiceImpl implements UserAchievementService {
             entity.setAchievementType(EnumAchievementType.USE_CHAT_MODULE_FOR_100_HOURS);
             entity.setEmail(email);
             entity.setCompleted(false);
-            entity.setGoal(100L);
+            entity.setGoal(6000L);
             entity.setOccurred(0L);
             entity.setPercentage(0.0);
             entity.setDescription("Use Chat for 100 Hours.");
@@ -125,7 +125,7 @@ public class UserAchievementServiceImpl implements UserAchievementService {
             entity.setAchievementType(EnumAchievementType.USE_SLEEP_MODULE_FOR_100_HOURS);
             entity.setEmail(email);
             entity.setCompleted(false);
-            entity.setGoal(100L);
+            entity.setGoal(6000L);
             entity.setOccurred(0L);
             entity.setPercentage(0.0);
             entity.setDescription("Use Sleep Module for 100 hours.");
@@ -248,11 +248,11 @@ public class UserAchievementServiceImpl implements UserAchievementService {
         repository.findAllByAchievementTypeAndIsCompleted(EnumAchievementType.USE3IN1_FOR_THREE_MONTHS.name(), false)
                 .forEach(el -> {
                     el.setOccurred(el.getOccurred() + 1);
-                    if (el.getGoal() == el.getOccurred()) {
+                    if (el.getGoal().equals(el.getOccurred())) {
                         el.setCompleted(true);
                         el.setPercentage(1.0);
                     } else {
-                        double percentage = el.getOccurred() / el.getGoal();
+                        double percentage = (float) el.getOccurred() / (float) el.getGoal();
                         el.setPercentage(percentage);
                     }
                     repository.save(el);
@@ -261,7 +261,7 @@ public class UserAchievementServiceImpl implements UserAchievementService {
         repository.findAllByAchievementTypeAndIsCompleted(EnumAchievementType.USE3IN1_FOR_ONE_YEAR.name(), false)
                 .forEach(el -> {
                     el.setOccurred(el.getOccurred() + 1);
-                    if (el.getGoal() == el.getOccurred()) {
+                    if (el.getGoal().equals(el.getOccurred())) {
                         el.setCompleted(true);
                         el.setPercentage(1.0);
                     } else {
