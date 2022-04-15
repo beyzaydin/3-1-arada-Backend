@@ -3,6 +3,10 @@ package winx.bitirme.auth.service.logic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import winx.bitirme.achievement.client.model.EnumAchievementType;
+import winx.bitirme.achievement.service.entity.UserAchievementEntity;
+import winx.bitirme.achievement.service.logic.UserAchievementService;
+import winx.bitirme.achievement.service.repository.UserAchievementRepository;
 import winx.bitirme.auth.client.model.ToDoModel;
 import winx.bitirme.auth.client.model.ToDoReturnModel;
 import winx.bitirme.auth.service.converter.ToDoMapper;
@@ -15,13 +19,19 @@ public class ToDoService {
     private final ToDoRepository repository;
     private final ToDoMapper mapper;
     private final SequenceGeneratorService sequenceGeneratorService;
+    private final UserAchievementService userAchievementService;
+    private final UserAchievementRepository userAchievementRepository;
 
     @Autowired
     public ToDoService(ToDoRepository repository, ToDoMapper mapper,
-                       SequenceGeneratorService sequenceGeneratorService) {
+                       SequenceGeneratorService sequenceGeneratorService,
+                       UserAchievementService userAchievementService,
+                       UserAchievementRepository userAchievementRepository) {
         this.repository = repository;
         this.mapper = mapper;
         this.sequenceGeneratorService = sequenceGeneratorService;
+        this.userAchievementService = userAchievementService;
+        this.userAchievementRepository = userAchievementRepository;
     }
 
 
@@ -50,9 +60,18 @@ public class ToDoService {
     public ToDoModel updateTask(ToDoModel model) {
         ToDoEntity entity = repository.findByUsernameAndTask(model.getUsername(), model.getTask());
         if (getToDoModel(model.getTask(), model.getUsername()) == null
-            && entity != null )
+                && entity != null)
             return null;
         model.setId(entity.getId());
+        if (entity.getIsDone() && !model.getIsDone()) {
+            UserAchievementEntity userAchievement =
+                    userAchievementRepository.findByEmailAndAchievementType(model.getUsername(), EnumAchievementType.COMPLETE_15_ITEMS_IN_TODO_LIST.name());
+            userAchievement.setOccurred(userAchievement.getOccurred() - 1);
+            userAchievement.setPercentage((double)userAchievement.getOccurred()/(double)userAchievement.getGoal());
+            userAchievement.setCompleted(userAchievement.getGoal().equals(userAchievement.getOccurred()));
+            userAchievementRepository.save(userAchievement);
+        }
+
         return mapper.convertToModel(repository.save(mapper.convertToEntity(model)));
     }
 }
