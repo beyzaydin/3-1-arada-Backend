@@ -142,11 +142,15 @@ public class ProfileController {
                     .body("Model is not found!");
         return ResponseEntity.ok(fromDb);
     }
-
     @GetMapping(value = "/todo",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getToDoListByUsername() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(toDoService.getToDoListByUsername(username));
+    }
+    @PostMapping(value ="/deleteTask", consumes=MediaType.APPLICATION_JSON_VALUE)
+    public void deleteTask(@RequestBody ToDoModel model){
+        model.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        toDoService.deleteTask(model.getTask(),model.getUsername());
     }
 }
