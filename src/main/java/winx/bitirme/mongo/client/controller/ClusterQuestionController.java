@@ -49,6 +49,15 @@ public class ClusterQuestionController {
     public void submitAnswers(@RequestBody AnswerSubmitRequest payload){
         User submitter = this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         ClusteringQuestion iterate;
+        if (payload.getPayload().get(0).getSubmitter() == null){
+            AnswerSubmitRequest replacer = new AnswerSubmitRequest();
+            ArrayList<SubmittedAnswer> answerReplace = new ArrayList<>();
+            for (SubmittedAnswer toAdd : payload.getPayload()){
+                answerReplace.add(new SubmittedAnswer(submitter,toAdd.getQuestionBody(),toAdd.getAnswer()));
+            }
+            replacer.setPayload(answerReplace);
+            payload = replacer;
+        }
         ArrayList<Answer> toInsert = new ArrayList<>();
         if (submitter == null){
             return;
