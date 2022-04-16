@@ -25,12 +25,12 @@ import winx.bitirme.auth.service.entity.PasswordChangeTokenEntity;
 import winx.bitirme.auth.service.entity.Role;
 import winx.bitirme.auth.service.entity.User;
 import winx.bitirme.auth.service.logic.EmailService;
-import winx.bitirme.auth.service.logic.ToDoService;
 import winx.bitirme.auth.service.logic.UserDetailsImpl;
 import winx.bitirme.auth.service.repository.PasswordChangeTokenRepository;
 import winx.bitirme.auth.service.repository.RoleRepository;
 import winx.bitirme.auth.service.repository.UserRepository;
 import winx.bitirme.auth.service.utils.JwtUtils;
+import winx.bitirme.mongo.service.logic.ClusteringFormService;
 import winx.bitirme.mongo.service.logic.SequenceGeneratorService;
 
 import javax.mail.MessagingException;
@@ -56,6 +56,7 @@ public class AuthController {
     @Value("$ {bezkoder.app.jwtSecret} ")
     private String jwtSecret;
     private final UserAchievementService userAchievementService;
+    private final ClusteringFormService clusteringFormService;
 
     @Autowired
     public AuthController(MongoOperations mongo,
@@ -67,7 +68,7 @@ public class AuthController {
                           SequenceGeneratorService sequenceGeneratorService,
                           EmailService emailService,
                           PasswordChangeTokenRepository passwordChangeTokenRepository,
-                          UserAchievementService userAchievementService, ToDoService toDoService) {
+                          UserAchievementService userAchievementService, ClusteringFormService clusteringFormService) {
         this.mongo = mongo;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
@@ -78,6 +79,7 @@ public class AuthController {
         this.emailService = emailService;
         this.passwordChangeTokenRepository = passwordChangeTokenRepository;
         this.userAchievementService = userAchievementService;
+        this.clusteringFormService = clusteringFormService;
     }
 
     @PostMapping(value = "/updatePass",
@@ -124,7 +126,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<SignInResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -138,13 +140,13 @@ public class AuthController {
                 .collect(Collectors.toList());
 
         userAchievementService.dailyLoginAchieved(loginRequest.getUsername());
+        boolean didUserCompleteForm = clusteringFormService.didUserCompleteForm(userRepository.findByUsername(loginRequest.getUsername()));
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
+        return ResponseEntity.ok(new SignInResponse(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                roles));
-
+                roles).getAccessToken(),didUserCompleteForm));
     }
 
     @PostMapping("/role")
