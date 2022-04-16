@@ -10,4 +10,6 @@ public interface SleepService {
     DailyStatisticEntity saveSleepData(List<SleepStatisticModel> list) throws ParseException;
 
     List<DailyStatisticEntity> getWeeklyDataForMobile();
+
+    List<DailyStatisticEntity> getWeeklyDataForWeb(int weekDay);
 }

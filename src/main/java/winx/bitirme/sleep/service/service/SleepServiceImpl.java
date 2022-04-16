@@ -30,22 +30,20 @@ public class SleepServiceImpl implements SleepService {
     private final SleepStatisticRepository sleepStatisticRepository;
     private final SequenceGeneratorService sequenceGeneratorService;
     private final MongoTemplate mongoTemplate;
-    private final MongoOperations mongoOperations;
 
     @Autowired
     public SleepServiceImpl(DailyStatisticRepository dailyStatisticRepository,
                             SleepStatisticRepository sleepStatisticRepository,
                             SequenceGeneratorService sequenceGeneratorService,
-                            MongoTemplate mongoTemplate, MongoOperations mongoOperations) {
+                            MongoTemplate mongoTemplate) {
         this.dailyStatisticRepository = dailyStatisticRepository;
         this.sleepStatisticRepository = sleepStatisticRepository;
         this.sequenceGeneratorService = sequenceGeneratorService;
         this.mongoTemplate = mongoTemplate;
-        this.mongoOperations = mongoOperations;
     }
 
     @Override
-    public DailyStatisticEntity saveSleepData(List<SleepStatisticModel> list) throws ParseException {
+    public DailyStatisticEntity saveSleepData(List<SleepStatisticModel> list) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         LocalDate date = LocalDate.now();
@@ -53,7 +51,7 @@ public class SleepServiceImpl implements SleepService {
         String text = date.format(formatters);
         LocalDate parsedDate = LocalDate.parse(text, formatters);
 
-        var fromDb = dailyStatisticRepository.findByEmailAndDate(email, parsedDate);
+        DailyStatisticEntity fromDb = dailyStatisticRepository.findByEmailAndDate(email, parsedDate);
 
         if (fromDb == null) {
             DailyStatisticEntity entity = normalise(list);
@@ -64,22 +62,22 @@ public class SleepServiceImpl implements SleepService {
         return fromDb;
     }
 
-    //TODO burayı adnanla dene
     @Override
     public List<DailyStatisticEntity> getWeeklyDataForMobile() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Calendar c = Calendar.getInstance();
         c.setFirstDayOfWeek(Calendar.MONDAY);
-        c.setTime(new Date());
-        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+        dayOfWeek = dayOfWeek == 0 ? 7 : dayOfWeek;
+
         Calendar end = Calendar.getInstance();
         end.set(Calendar.HOUR_OF_DAY, 23);
         end.set(Calendar.MINUTE, 59);
         end.set(Calendar.SECOND, 59);
         Date endTime = end.getTime();
 
-        end.add(Calendar.DAY_OF_WEEK, -dayOfWeek);
+        end.add(Calendar.DAY_OF_WEEK, -(dayOfWeek + 1));
         end.set(Calendar.HOUR_OF_DAY, 0);
         end.set(Calendar.MINUTE, 0);
         end.set(Calendar.SECOND, 0);
@@ -91,12 +89,42 @@ public class SleepServiceImpl implements SleepService {
         return result;
     }
 
+    @Override
+    public List<DailyStatisticEntity> getWeeklyDataForWeb(int weekCount) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Calendar c = Calendar.getInstance();
+        c.setFirstDayOfWeek(Calendar.MONDAY);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+        dayOfWeek = dayOfWeek == 0 ? 7 : dayOfWeek;
+
+        Calendar end = Calendar.getInstance();
+
+        end.set(Calendar.HOUR_OF_DAY, 23);
+        end.set(Calendar.MINUTE, 59);
+        end.set(Calendar.SECOND, 59);
+        end.add(Calendar.DAY_OF_WEEK, -(dayOfWeek + 7 * weekCount -1));
+        Date startTime = end.getTime();
+
+        end.add(Calendar.DAY_OF_WEEK, 6);
+        end.set(Calendar.HOUR_OF_DAY, 0);
+        end.set(Calendar.MINUTE, 0);
+        end.set(Calendar.SECOND, 0);
+        end.set(Calendar.MILLISECOND, 0);
+
+        Date endTime = end.getTime();
+
+        List<DailyStatisticEntity> list = dailyStatisticRepository.findAllByEmail(email);
+        List<DailyStatisticEntity> result = list.stream().filter(el -> el.getSleepStartTime().after(startTime) && el.getSleepStartTime().before(endTime)).collect(Collectors.toList());
+        return result;
+    }
+
     /*
      * Burada 1 ile 10 arasına dağıttım verileri.
      * dailyStatistic'i de setledim.
      * Yukarıda sadece list'i alıp methoda verilecek
      * */
-    private DailyStatisticEntity normalise(List<SleepStatisticModel> models) throws ParseException {
+    private DailyStatisticEntity normalise(List<SleepStatisticModel> models) {
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
         int minInd = 0, maxInd = 0;
