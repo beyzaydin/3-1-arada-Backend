@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import winx.bitirme.auth.client.model.FormCompleteResponse;
 import winx.bitirme.auth.client.model.Profile;
 import winx.bitirme.auth.client.model.ToDoModel;
 import winx.bitirme.auth.service.entity.ProfileImageEntity;
@@ -14,6 +15,7 @@ import winx.bitirme.auth.service.entity.User;
 import winx.bitirme.auth.service.logic.ToDoService;
 import winx.bitirme.auth.service.repository.ProfileImageRepository;
 import winx.bitirme.auth.service.repository.UserRepository;
+import winx.bitirme.mongo.service.logic.ClusteringFormService;
 import winx.bitirme.mongo.service.logic.SequenceGeneratorService;
 
 import java.io.IOException;
@@ -26,15 +28,16 @@ public class ProfileController {
     private final ProfileImageRepository profileImageRepository;
     private final ToDoService toDoService;
     private final SequenceGeneratorService sequenceGeneratorService;
-
+    private final ClusteringFormService clusteringFormService;
     @Autowired
     public ProfileController(UserRepository userRepository,
                              ProfileImageRepository profileImageRepository,
-                             ToDoService toDoService, SequenceGeneratorService sequenceGeneratorService) {
+                             ToDoService toDoService, SequenceGeneratorService sequenceGeneratorService, ClusteringFormService clusteringFormService) {
         this.userRepository = userRepository;
         this.profileImageRepository = profileImageRepository;
         this.toDoService = toDoService;
         this.sequenceGeneratorService = sequenceGeneratorService;
+        this.clusteringFormService = clusteringFormService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -152,5 +155,10 @@ public class ProfileController {
     public void deleteTask(@RequestBody ToDoModel model){
         model.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         toDoService.deleteTask(model.getTask(),model.getUsername());
+    }
+    @GetMapping(value="/isFormComplete", produces=MediaType.APPLICATION_JSON_VALUE)
+    public FormCompleteResponse isFormComplete(){
+        boolean isComplete = clusteringFormService.didUserCompleteForm(userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()));
+        return new FormCompleteResponse(isComplete);
     }
 }

@@ -41,7 +41,6 @@ public class ClusterQuestionController {
     }
     @GetMapping(value = "/getQuestions", produces ="application/json")
     @ResponseBody
-
     public QuestionResponse getQuestions() {
         return new QuestionResponse(this.clusteringQuestionService.getAllQuestions());
     }

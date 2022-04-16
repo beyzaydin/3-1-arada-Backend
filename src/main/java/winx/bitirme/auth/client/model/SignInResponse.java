@@ -2,10 +2,27 @@ package winx.bitirme.auth.client.model;
 public class SignInResponse {
     private String token;
     private Boolean isFormCompleted;
-
-    public SignInResponse(String token, Boolean didUserCompleteForm) {
+    private String tokenType;
+    public SignInResponse(String token, Boolean didUserCompleteForm,String tokenType) {
         this.token = token;
         this.isFormCompleted = didUserCompleteForm;
+        this.tokenType = tokenType;
+    }
+
+    public Boolean getFormCompleted() {
+        return isFormCompleted;
+    }
+
+    public void setFormCompleted(Boolean formCompleted) {
+        isFormCompleted = formCompleted;
+    }
+
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
     }
 
     public SignInResponse() {
@@ -19,11 +36,4 @@ public class SignInResponse {
         this.token = token;
     }
 
-    public Boolean getDidUserCompleteForm() {
-        return isFormCompleted;
-    }
-
-    public void setDidUserCompleteForm(Boolean didUserCompleteForm) {
-        this.isFormCompleted = didUserCompleteForm;
-    }
 }

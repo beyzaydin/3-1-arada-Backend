@@ -141,12 +141,12 @@ public class AuthController {
 
         userAchievementService.dailyLoginAchieved(loginRequest.getUsername());
         boolean didUserCompleteForm = clusteringFormService.didUserCompleteForm(userRepository.findByUsername(loginRequest.getUsername()));
-
-        return ResponseEntity.ok(new SignInResponse(new JwtResponse(jwt,
+        JwtResponse innerResponse = new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                roles).getAccessToken(),didUserCompleteForm));
+                roles);
+        return ResponseEntity.ok(new SignInResponse(innerResponse.getAccessToken(),didUserCompleteForm,innerResponse.getTokenType()));
     }
 
     @PostMapping("/role")
