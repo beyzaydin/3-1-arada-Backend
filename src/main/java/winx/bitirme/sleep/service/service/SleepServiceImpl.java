@@ -53,7 +53,7 @@ public class SleepServiceImpl implements SleepService {
         String text = date.format(formatters);
         LocalDate parsedDate = LocalDate.parse(text, formatters);
 
-        var fromDb = dailyStatisticRepository.findByEmailAndDate(email, parsedDate);
+        DailyStatisticEntity fromDb = dailyStatisticRepository.findByEmailAndDate(email, parsedDate);
 
         if (fromDb == null) {
             DailyStatisticEntity entity = normalise(list);
