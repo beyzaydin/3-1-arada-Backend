@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import winx.bitirme.achievement.client.model.MobileSleepResponse;
 import winx.bitirme.sleep.client.model.SleepDataRequest;
+import winx.bitirme.sleep.client.model.SleepWebResponse;
 import winx.bitirme.sleep.service.entity.DailyStatisticEntity;
 import winx.bitirme.sleep.service.service.SleepService;
 
@@ -37,7 +38,7 @@ public class SleepDataController {
     }
 
     @GetMapping("/web")
-    public List<DailyStatisticEntity> web(@RequestParam Integer week) {
+    public SleepWebResponse web(@RequestParam Integer week) {
         return service.getWeeklyDataForWeb(week);
     }
 }

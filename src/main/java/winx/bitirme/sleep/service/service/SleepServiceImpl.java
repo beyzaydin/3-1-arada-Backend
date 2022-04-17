@@ -1,20 +1,22 @@
 package winx.bitirme.sleep.service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import winx.bitirme.mongo.service.logic.SequenceGeneratorService;
 import winx.bitirme.sleep.client.model.SleepStatisticModel;
+import winx.bitirme.sleep.client.model.SleepWebResponse;
 import winx.bitirme.sleep.service.entity.DailyStatisticEntity;
 import winx.bitirme.sleep.service.repository.DailyStatisticRepository;
 import winx.bitirme.sleep.service.repository.SleepStatisticRepository;
 
 import javax.transaction.Transactional;
-import java.text.ParseException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -85,12 +87,14 @@ public class SleepServiceImpl implements SleepService {
         Date startTime = end.getTime();
 
         List<DailyStatisticEntity> list = dailyStatisticRepository.findAllByEmail(email);
-        List<DailyStatisticEntity> result = list.stream().filter(el -> el.getSleepStartTime().after(startTime) && el.getSleepStartTime().before(endTime)).collect(Collectors.toList());
+        List<DailyStatisticEntity> result = list.stream()
+                .filter(el -> el.getSleepStartTime().after(startTime) && el.getSleepStartTime().before(endTime))
+                .collect(Collectors.toList());
         return result;
     }
 
     @Override
-    public List<DailyStatisticEntity> getWeeklyDataForWeb(int weekCount) {
+    public SleepWebResponse getWeeklyDataForWeb(int weekCount) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Calendar c = Calendar.getInstance();
@@ -103,7 +107,7 @@ public class SleepServiceImpl implements SleepService {
         end.set(Calendar.HOUR_OF_DAY, 23);
         end.set(Calendar.MINUTE, 59);
         end.set(Calendar.SECOND, 59);
-        end.add(Calendar.DAY_OF_WEEK, -(dayOfWeek + 7 * weekCount -1));
+        end.add(Calendar.DAY_OF_WEEK, -(dayOfWeek + 7 * weekCount - 1));
         Date startTime = end.getTime();
 
         end.add(Calendar.DAY_OF_WEEK, 6);
@@ -115,8 +119,40 @@ public class SleepServiceImpl implements SleepService {
         Date endTime = end.getTime();
 
         List<DailyStatisticEntity> list = dailyStatisticRepository.findAllByEmail(email);
-        List<DailyStatisticEntity> result = list.stream().filter(el -> el.getSleepStartTime().after(startTime) && el.getSleepStartTime().before(endTime)).collect(Collectors.toList());
-        return result;
+        List<DailyStatisticEntity> result = list.stream()
+                .filter(el -> el.getSleepStartTime().after(startTime) && el.getSleepStartTime().before(endTime))
+                .collect(Collectors.toList());
+        SleepWebResponse sleepWebResponse = new SleepWebResponse();
+        List<Boolean> validDays = new ArrayList<>(7);
+
+        Instant instant1 = startTime.toInstant()
+                .truncatedTo(ChronoUnit.DAYS);
+
+        for (int i = 0; i <= 6; i++) {
+            validDays.add(false);
+            for (int j = 0; j < result.size(); j++) {
+                Instant instant2 = result.get(j).getSleepStartTime().toInstant()
+                        .truncatedTo(ChronoUnit.DAYS);
+                boolean isEqual = instant1.equals(instant2);
+                if (isEqual) {
+                    validDays.set(i,true);
+                    break;
+                }
+            }
+            instant1 = instant1.plus(1, ChronoUnit.DAYS);
+        }
+
+        List<DailyStatisticEntity> finalList = new ArrayList<>(7);
+        for (int i = 0; i < 7; i++) {
+            finalList.add(null);
+            if(validDays.get(i)){
+                finalList.set(i,result.get(0));
+                result.remove(0);
+            }
+        }
+        sleepWebResponse.setList(finalList);
+        sleepWebResponse.setValidDays(validDays);
+        return sleepWebResponse;
     }
 
     /*

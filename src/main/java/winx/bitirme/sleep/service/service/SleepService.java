@@ -1,6 +1,7 @@
 package winx.bitirme.sleep.service.service;
 
 import winx.bitirme.sleep.client.model.SleepStatisticModel;
+import winx.bitirme.sleep.client.model.SleepWebResponse;
 import winx.bitirme.sleep.service.entity.DailyStatisticEntity;
 
 import java.text.ParseException;
@@ -11,5 +12,5 @@ public interface SleepService {
 
     List<DailyStatisticEntity> getWeeklyDataForMobile();
 
-    List<DailyStatisticEntity> getWeeklyDataForWeb(int weekDay);
+    SleepWebResponse getWeeklyDataForWeb(int weekDay);
 }
