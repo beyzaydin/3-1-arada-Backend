@@ -132,18 +132,6 @@ public class UserAchievementServiceImpl implements UserAchievementService {
 
             repository.save(entity);
 
-            id = sequenceGeneratorService.generateSequence(UserAchievementEntity.SEQUENCE_NAME);
-            entity = new UserAchievementEntity();
-            entity.setId(id);
-            entity.setAchievementType(EnumAchievementType.USE_SLEEP_MODULE_FOR_100_HOURS);
-            entity.setEmail(email);
-            entity.setCompleted(false);
-            entity.setGoal(100L);
-            entity.setOccurred(0L);
-            entity.setPercentage(0.0);
-            entity.setDescription("Use Sleep Module for 100 hours.");
-
-            repository.save(entity);
 
             id = sequenceGeneratorService.generateSequence(UserAchievementEntity.SEQUENCE_NAME);
             entity = new UserAchievementEntity();
